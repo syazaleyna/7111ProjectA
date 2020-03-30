@@ -22,7 +22,8 @@ seedwashdaily<-read_excel('SeedwashData_1day_2016_2019.xlsx', skip=6, na=c(""," 
 #----------------------------------------------------------------------------------------------------------------------------------------
 
 #extract feed data from daily observation
-oxadestructdaily <- seedwashdaily$`2OOxDestREGD`
+outputspodaily <- seedwashdaily$PONthTkAN.Ox
+outputsodadaily <- seedwashdaily$POSOFATPV.S
 throughputdaily <- seedwashdaily$POFeedMQPV
 spodaily <- seedwashdaily$POFeedAN.Ox
 feedsodadaily <- seedwashdaily$POFeedAN.C
@@ -35,52 +36,70 @@ for(i in 1:length(dailytimestep)){
 
 
 dailydata   <- data.frame(time = dailytimestep,           #day
-                          oxalate = oxadestructdaily,     #%
+                          outputspo = outputspodaily,     #%
+                          outputsoda = outputsodadaily,   #g/l 
                           throughput = throughputdaily,   #t/h
-                          spo = spodaily*100,             #%*100
+                          feedspo = spodaily,             #%
                           feedsoda = feedsodadaily,       #g/l
-                          feeddensity = feeddensitydaily*100) #SG*100
+                          feeddensity = feeddensitydaily) #SG
 
 multipledaily <- dailydata %>%
-  gather(type, data, oxalate:feeddensity)
+  gather(type, data, outputspo:feeddensity)
 
 ggplot(multipledaily, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) + 
   geom_smooth(method = lm) + xlab("Time (day)") + ggtitle("Feed Data Comparison")
 # ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
 
-#observed against oxalate destruction
+#observed against Output Soda Conc.
+outputspo <- multipledaily %>%
+  filter(type == 'outputspo')
+ggplot(outputspo, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) +
+  xlab("Time (day)") + ylab("Output SPO (%)") +
+  ggtitle("Daily Output SPO")
+
+outputsoda <- multipledaily %>%
+  filter(type == 'outputsoda')
+ggplot(outputsoda, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) +
+  xlab("Time (day)") + ylab("Output Soda Conc. (g/l)") +
+  ggtitle("Daily Output Soda Conc.")
+
+
 throughput <- multipledaily %>%
-  filter(type == 'oxalate'| type == 'throughput')
+  filter(type == 'throughput')
 ggplot(throughput, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
   geom_smooth(method = lm) +
-  xlab("Time (day)") + ylab("Throughput (t/h), Oxalate Destruction (%)") +
-  ggtitle("Feed Throughput vs Oxalate Destruction")
+  xlab("Time (day)") + ylab("Throughput (t/h)") +
+  ggtitle("Daily Feed Throughput")
 
 
-spo <- multipledaily %>%
-  filter(type == 'oxalate'| type == 'spo')
-ggplot(spo, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+feedspo <- multipledaily %>%
+  filter(type == 'feedspo')
+ggplot(feedspo, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
   geom_smooth(method = lm) +
-  xlab("Time (day)") + ylab("Solid Phase Oxalate (%*100), Oxalate Destruction (%)") +
-  ggtitle("Feed Solid Phase Oxalate vs Oxalate Destruction")
+  xlab("Time (day)") + ylab("Solid Phase Oxalate (%)") +
+  ggtitle("Daily Feed Solid Phase Oxalate")
 
 
 feedsoda <- multipledaily %>%
-  filter(type == 'oxalate'| type == 'feedsoda')
+  filter(type == 'feedsoda')
 ggplot(feedsoda, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Feed Soda Conc. (g/l), Oxalate Destruction (%)") +
-  ggtitle("Feed Soda Conc. vs Oxalate Destruction")
+  geom_smooth(method = lm) +
+  xlab("Time (day)") + ylab("Feed Soda Conc. (g/l)") +
+  ggtitle("Daily Feed Soda Conc.")
 
 
 feeddensity <- multipledaily %>%
-  filter(type == 'oxalate'| type == 'feeddensity')
+  filter(type == 'feeddensity')
 ggplot(feeddensity, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Feed Density (SG*100), Oxalate Destruction (%)") +
-  ggtitle("Feed Density vs Oxalate Destruction")
+  geom_smooth(method = lm) +
+  xlab("Time (day)") + ylab("Feed Density (SG)") +
+  ggtitle("Daily Feed Density")
 
 
 #------------------------------------------------------------------------------------------------
-#extract A1 data from daily observation
+#extract 1A data from daily observation
 statusdailyA1 <- seedwashdaily$PO1AFOLXBDI
 drumspeeddailyA1 <- seedwashdaily$PO1AFDrumSTPV
 bathleveldailyA1 <- seedwashdaily$PO1ABathLCPV
@@ -101,11 +120,12 @@ for (i in 1:length(sodaconcdailyA1)){
 
 dailydataA1 <- data.frame(time = dailytimestep,           #day
                           status = statusdailyA1,
-                          oxalate = oxadestructdaily,     #%
+                          outputspo = outputspodaily,     #%
+                          outputsoda = outputsodadaily,   #g/l
                           throughput = throughputdaily,   #t/h
-                          spo = spodaily*100,             #%
+                          feedspo = spodaily,             #%
                           feedsoda = feedsodadaily,       #g/l
-                          feeddensity = feeddensitydaily*100, #SG
+                          feeddensity = feeddensitydaily, #SG
                           drumspeed = drumspeeddailyA1,   #RPM
                           bathlevel = bathleveldailyA1,   #%
                           vacuum = vacuumdailyA1,         #kPa
@@ -120,85 +140,87 @@ dailydataA1 <- data.frame(time = dailytimestep,           #day
 
 multipledailyA1 <- dailydataA1 %>%
   filter(status == 'On') %>%
-  gather(type, data, oxalate:sodaconc)
+  gather(type, data, outputspo:sodaconc)
 
 ggplot(multipledailyA1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
   xlab("Time (day)") + ggtitle("Filter 1A Data Comparison")
 # ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
 
-#observed against oxalate destruction
+#observed against Output Soda Conc.
 drumspeedA1 <- multipledailyA1 %>%
   filter(type == 'drumspeed')
 ggplot(drumspeedA1, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) +
   xlab("Time (day)") + ylab("Drum Speed (RPM)") +
-  ggtitle("Filter 1A Drum Speed")
+  ggtitle("Daily Filter 1A Drum Speed")
 
 
 bathlevelA1 <- multipledailyA1 %>%
-  filter(type == 'oxalate'| type == 'bathlevel')
-ggplot(bathlevelA1, aes(x=time, y=data, color = type)) + geom_line() + 
-  xlab("Time (day)") + ylab("Bath Level (%), Oxalate Destruction (%)") +
-  ggtitle("Filter 1A Bath Level vs Oxalate Destruction")
+  filter(type == 'bathlevel')
+ggplot(bathlevelA1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) + 
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Bath Level (%)") +
+  ggtitle("Daily Filter 1A Bath Level")
 
 
 vacuumA1 <- multipledailyA1 %>%
-  filter(type == 'oxalate'| type == 'vacuum')
-ggplot(vacuumA1, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Vacuum Pressure (kPa), Oxalate Destruction (%)") +
-  ggtitle("Filter 1A Vacuum Pressure vs Oxalate Destruction")
+  filter(type == 'vacuum')
+ggplot(vacuumA1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Vacuum Pressure (kPa)") +
+  ggtitle("Daily Filter 1A Vacuum Pressure")
 
 
 feedflowA1 <- multipledailyA1 %>%
-  filter(type == 'oxalate'| type == 'feedflow')
-ggplot(feedflowA1, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Feed Flow (kl/h), Oxalate Destruction (%)") +
-  ggtitle("Filter 1A Feed Flow vs Oxalate Destruction")
+  filter(type == 'feedflow')
+ggplot(feedflowA1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Feed Flow (kl/h)") +
+  ggtitle("Daily Filter 1A Feed Flow")
 
 
 flocflowA1 <- multipledailyA1 %>%
-  filter(type == 'oxalate'| type == 'flocflow')
-ggplot(flocflowA1, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Floc Flow (kl/h), Oxalate Destruction (%)") +
-  ggtitle("Filter 1A Floc Flow vs Oxalate Destruction")
+  filter(type == 'flocflow')
+ggplot(flocflowA1, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Floc Flow (kl/h)") +
+  ggtitle("Daily Filter 1A Floc Flow")
 
 
 cakewashA1 <- multipledailyA1 %>%
-  filter(type == 'oxalate'| type == 'cakewash')
-ggplot(cakewashA1, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Cake Wash Flow (kl/h), Oxalate Destruction (%)") +
-  ggtitle("Filter 1A Cake Wash Flow vs Oxalate Destruction")
+  filter( type == 'cakewash')
+ggplot(cakewashA1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Cake Wash Flow (kl/h)") +
+  ggtitle("Daily Filter 1A Cake Wash Flow")
 
 
 clothwashA1 <- multipledailyA1 %>%
-  filter(type == 'oxalate'| type == 'clothwash')
-ggplot(clothwashA1, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Cloth Wash Flow (kl/h), Oxalate Destruction (%)") +
-  ggtitle("Filter 1A Cloth Wash Flow vs Oxalate Destruction")
+  filter( type == 'clothwash')
+ggplot(clothwashA1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Cloth Wash Flow (kl/h)") +
+  ggtitle("Daily Filter 1A Cloth Wash Flow")
 
 
 sodafiltrateA1 <- multipledailyA1 %>%
-  filter(type == 'oxalate'| type == 'sodafiltrate')
+  filter( type == 'sodafiltrate')
 ggplot(sodafiltrateA1, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Filtrate Soda Conc. (g/l), Oxalate Destruction (%)") +
-  ggtitle("Filter 1A Filtrate Soda Conc. vs Oxalate Destruction")
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Filtrate Soda Conc. (g/l)") +
+  ggtitle("Daily Filter 1A Filtrate Soda Conc.")
 
 
 oxfiltrateA1 <- multipledailyA1 %>%
-  filter(type == 'oxalate'| type == 'oxfiltrate')
-ggplot(oxfiltrateA1, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Filtrate Oxalate (%), Oxalate Destruction (%)") +
-  ggtitle("Filter 1A Filtrate Oxalate vs Oxalate Destruction")
+  filter( type == 'oxfiltrate')
+ggplot(oxfiltrateA1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Filtrate Oxalate (%)") +
+  ggtitle("Daily Filter 1A Filtrate Oxalate")
 
 
 sodaconcA1 <- multipledailyA1 %>%
-  filter(type == 'oxalate'| type == 'sodaconc')
+  filter( type == 'sodaconc')
 ggplot(sodaconcA1, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Inlet Soda (t/h), Oxalate Destruction (%)") +
-  ggtitle("Filter 1A Inlet Soda vs Oxalate Destruction")
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Inlet Soda (t/h)") +
+  ggtitle("Daily Filter 1A Inlet Soda")
 
 
 #-------------------------------------------------------------------------------------------
-#extract A1 data from daily observation
+#extract 2A data from daily observation
+statusdailyA2 <- seedwashdaily$PO2AFOLXBDI
 drumspeeddailyA2 <- seedwashdaily$PO2AFDrumSTPV
 bathleveldailyA2 <- seedwashdaily$PO2ABathLCPV
 vacuumdailyA2 <- seedwashdaily$PO2AVacPCPV
@@ -217,9 +239,11 @@ for (i in 1:length(sodaconcdailyA2)){
 
 
 dailydataA2 <- data.frame(time = dailytimestep,           #day
-                          oxalate = oxadestructdaily,     #%
+                          status = statusdailyA2,
+                          outputspo = outputspodaily,     #%
+                          outputsoda = outputsodadaily,   #g/l
                           throughput = throughputdaily,   #t/h
-                          spo = spodaily,                 #%
+                          feedspo = spodaily,             #%
                           feedsoda = feedsodadaily,       #g/l
                           feeddensity = feeddensitydaily, #SG
                           drumspeed = drumspeeddailyA2,   #RPM
@@ -235,81 +259,1400 @@ dailydataA2 <- data.frame(time = dailytimestep,           #day
 
 
 multipledailyA2 <- dailydataA2 %>%
-  gather(type, data, oxalate:sodaconc)
+  filter(status == 'On') %>%
+  gather(type, data, outputspo:sodaconc)
 
 ggplot(multipledailyA2, aes(x=time, y=data, color = type)) + geom_line() +
   xlab("Time (day)") + ggtitle("Filter 2A Data Comparison")
 # ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
 
-#observed against oxalate destruction
+#observed against Output Soda Conc.
 drumspeedA2 <- multipledailyA2 %>%
-  filter(type == 'oxalate'| type == 'drumspeed')
-ggplot(drumspeedA2, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Drum Speed (RPM), Oxalate Destruction (%)") +
-  ggtitle("Filter 2A Drum Speed vs Oxalate Destruction")
+  filter(type == 'drumspeed')
+ggplot(drumspeedA2, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Drum Speed (RPM)") +
+  ggtitle("Daily Filter 2A Drum Speed")
 
 
 bathlevelA2 <- multipledailyA2 %>%
-  filter(type == 'oxalate'| type == 'bathlevel')
-ggplot(bathlevelA2, aes(x=time, y=data, color = type)) + geom_line() + 
-  xlab("Time (day)") + ylab("Bath Level (%), Oxalate Destruction (%)") +
-  ggtitle("Filter 2A Bath Level vs Oxalate Destruction")
+  filter( type == 'bathlevel')
+ggplot(bathlevelA2, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) + 
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Bath Level (%)") +
+  ggtitle("Daily Filter 2A Bath Level")
 
 
 vacuumA2 <- multipledailyA2 %>%
-  filter(type == 'oxalate'| type == 'vacuum')
-ggplot(vacuumA2, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Vacuum Pressure (kPa), Oxalate Destruction (%)") +
-  ggtitle("Filter 2A Vacuum Pressure vs Oxalate Destruction")
+  filter( type == 'vacuum')
+ggplot(vacuumA2, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Vacuum Pressure (kPa)") +
+  ggtitle("Daily Filter 2A Vacuum Pressure")
 
 
 feedflowA2 <- multipledailyA2 %>%
-  filter(type == 'oxalate'| type == 'feedflow')
-ggplot(feedflowA2, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Feed Flow (kl/h), Oxalate Destruction (%)") +
-  ggtitle("Filter 2A Feed Flow vs Oxalate Destruction")
+  filter( type == 'feedflow')
+ggplot(feedflowA2, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Feed Flow (kl/h)") +
+  ggtitle("Daily Filter 2A Feed Flow")
 
 
 flocflowA2 <- multipledailyA2 %>%
-  filter(type == 'oxalate'| type == 'flocflow')
-ggplot(flocflowA2, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Floc Flow (kl/h), Oxalate Destruction (%)") +
-  ggtitle("Filter 2A Floc Flow vs Oxalate Destruction")
+  filter(type == 'flocflow')
+ggplot(flocflowA2, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Floc Flow (kl/h)") +
+  ggtitle("Daily Filter 2A Floc Flow")
 
 
 cakewashA2 <- multipledailyA2 %>%
-  filter(type == 'oxalate'| type == 'cakewash')
-ggplot(cakewashA2, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Cake Wash Flow (kl/h), Oxalate Destruction (%)") +
-  ggtitle("Filter 2A Cake Wash Flow vs Oxalate Destruction")
+  filter( type == 'cakewash')
+ggplot(cakewashA2, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Cake Wash Flow (kl/h)") +
+  ggtitle("Daily Filter 2A Cake Wash Flow")
 
 
 clothwashA2 <- multipledailyA2 %>%
-  filter(type == 'oxalate'| type == 'clothwash')
-ggplot(clothwashA2, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Cloth Wash Flow (kl/h), Oxalate Destruction (%)") +
-  ggtitle("Filter 2A Cloth Wash Flow vs Oxalate Destruction")
+  filter( type == 'clothwash')
+ggplot(clothwashA2, aes(x=time, y=data, color = type)) + geom_line(alpha=0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Cloth Wash Flow (kl/h)") +
+  ggtitle("Daily Filter 2A Cloth Wash Flow")
 
 
 sodafiltrateA2 <- multipledailyA2 %>%
-  filter(type == 'oxalate'| type == 'sodafiltrate')
+  filter( type == 'sodafiltrate')
 ggplot(sodafiltrateA2, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Filtrate Soda Conc. (g/l), Oxalate Destruction (%)") +
-  ggtitle("Filter 2A Filtrate Soda Conc. vs Oxalate Destruction")
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Filtrate Soda Conc. (g/l)") +
+  ggtitle("Daily Filter 2A Filtrate Soda Conc.")
 
 
 oxfiltrateA2 <- multipledailyA2 %>%
-  filter(type == 'oxalate'| type == 'oxfiltrate')
+  filter( type == 'oxfiltrate')
 ggplot(oxfiltrateA2, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Filtrate Oxalate (%), Oxalate Destruction (%)") +
-  ggtitle("Filter 2A Filtrate Oxalate vs Oxalate Destruction")
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Filtrate Oxalate (%)") +
+  ggtitle("Daily Filter 2A Filtrate Oxalate")
 
 
 sodaconcA2 <- multipledailyA2 %>%
-  filter(type == 'oxalate'| type == 'sodaconc')
+  filter( type == 'sodaconc')
 ggplot(sodaconcA2, aes(x=time, y=data, color = type)) + geom_line() +
-  xlab("Time (day)") + ylab("Inlet Soda (t/h), Oxalate Destruction (%)") +
-  ggtitle("Filter 2A Inlet Soda vs Oxalate Destruction")
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Inlet Soda (t/h)") +
+  ggtitle("Daily Filter 2A Inlet Soda")
+
+
+#-------------------------------------------------------------------------------------------
+#extract 3A data from daily observation
+statusdailyA3 <- seedwashdaily$PO3AFOLXBDI
+drumspeeddailyA3 <- seedwashdaily$PO3AFDrumSTPV
+bathleveldailyA3 <- seedwashdaily$PO3ABathLCPV
+vacuumdailyA3 <- seedwashdaily$PO3AVacPCPV
+feedflowdailyA3 <- seedwashdaily$PO3FeedFCPV
+flocflowdailyA3 <- seedwashdaily$PO3FlocFTPV
+cakewashdailyA3 <- seedwashdaily$PO3ASprayFCPV
+clothwashdailyA3 <- seedwashdaily$POSW3AcfMXPV
+sodafiltdailyA3 <- seedwashdaily$PO3AFltAN.C
+oxfiltdailyA3 <- seedwashdaily$PO3AFltAN.Ox
+
+#soda concentration in ton/hr
+sodaconcdailyA3 <- c(1:length(feedflowdailyA3))
+for (i in 1:length(sodaconcdailyA3)){
+  sodaconcdailyA3[i] <- feedflowdailyA3[i]*seedwashdaily$POFeedAN.C[i]/1000
+}
+
+
+dailydataA3 <- data.frame(time = dailytimestep,           #day
+                          status = statusdailyA3,
+                          outputspo = outputspodaily,     #%
+                          outputsoda = outputsodadaily,   #g/l
+                          throughput = throughputdaily,   #t/h
+                          feedspo = spodaily,             #%
+                          feedsoda = feedsodadaily,       #g/l
+                          feeddensity = feeddensitydaily, #SG
+                          drumspeed = drumspeeddailyA3,   #RPM
+                          bathlevel = bathleveldailyA3,   #%
+                          vacuum = vacuumdailyA3,         #kPa
+                          feedflow = feedflowdailyA3,     #kl/h
+                          flocflow = flocflowdailyA3,     #kl/h
+                          cakewash = cakewashdailyA3,     #kl/h
+                          clothwash = clothwashdailyA3,   #kl/h
+                          sodafiltrate = sodafiltdailyA3, #g/l
+                          oxfiltrate = oxfiltdailyA3,     #g/l
+                          sodaconc = sodaconcdailyA3)     #t/h
+
+
+multipledailyA3 <- dailydataA3 %>%
+  filter(status == 'On') %>%
+  gather(type, data, outputspo:sodaconc)
+
+ggplot(multipledailyA3, aes(x=time, y=data, color = type)) + geom_line() +
+  xlab("Time (day)") + ggtitle("Daily Filter 3A Data Comparison")
+# ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
+
+#observed against Output Soda Conc.
+drumspeedA3 <- multipledailyA3 %>%
+  filter(type == 'drumspeed')
+ggplot(drumspeedA3, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Drum Speed (RPM)") +
+  ggtitle("Daily Filter 3A Drum Speed")
+
+
+bathlevelA3 <- multipledailyA3 %>%
+  filter( type == 'bathlevel')
+ggplot(bathlevelA3, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) + 
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Bath Level (%)") +
+  ggtitle("Daily Filter 3A Bath Level")
+
+
+vacuumA3 <- multipledailyA3 %>%
+  filter( type == 'vacuum')
+ggplot(vacuumA3, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Vacuum Pressure (kPa)") +
+  ggtitle("Daily Filter 3A Vacuum Pressure")
+
+
+feedflowA3 <- multipledailyA3 %>%
+  filter( type == 'feedflow')
+ggplot(feedflowA3, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Feed Flow (kl/h)") +
+  ggtitle("Daily Filter 3A Feed Flow")
+
+
+flocflowA3 <- multipledailyA3 %>%
+  filter(type == 'flocflow')
+ggplot(flocflowA3, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Floc Flow (kl/h)") +
+  ggtitle("Daily Filter 3A Floc Flow")
+
+
+cakewashA3 <- multipledailyA3 %>%
+  filter( type == 'cakewash')
+ggplot(cakewashA3, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Cake Wash Flow (kl/h)") +
+  ggtitle("Daily Filter 3A Cake Wash Flow")
+
+
+clothwashA3 <- multipledailyA3 %>%
+  filter( type == 'clothwash')
+ggplot(clothwashA3, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Cloth Wash Flow (kl/h)") +
+  ggtitle("Daily Filter 3A Cloth Wash Flow")
+
+
+sodafiltrateA3 <- multipledailyA3 %>%
+  filter( type == 'sodafiltrate')
+ggplot(sodafiltrateA3, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Filtrate Soda Conc. (g/l)") +
+  ggtitle("Daily Filter 3A Filtrate Soda Conc.")
+
+
+oxfiltrateA3 <- multipledailyA3 %>%
+  filter( type == 'oxfiltrate')
+ggplot(oxfiltrateA3, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Filtrate Oxalate (%)") +
+  ggtitle("Daily Filter 3A Filtrate Oxalate")
+
+
+sodaconcA3 <- multipledailyA3 %>%
+  filter( type == 'sodaconc')
+ggplot(sodaconcA3, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Inlet Soda (t/h)") +
+  ggtitle("Daily Filter 3A Inlet Soda")
+
+
+#-------------------------------------------------------------------------------------------
+#extract 4A data from daily observation
+statusdailyA4 <- seedwashdaily$PO3BFiltAXBDI
+drumspeeddailyA4 <- seedwashdaily$PO3BFDrumSTPV
+bathleveldailyA4 <- seedwashdaily$PO4AFBathLCPV
+vacuumdailyA4 <- seedwashdaily$PO3BVacPCPV
+feedflowdailyA4 <- seedwashdaily$PO4AFFeedFCPV
+flocflowdailyA4 <- seedwashdaily$PO4AFlocFTPV
+cakewashdailyA4 <- seedwashdaily$PO4AFCakeWFTPV
+clothwashdailyA4 <- seedwashdaily$PO4AFHCRFCPV...120
+sodafiltdailyA4 <- seedwashdaily$PO4AFltAN.C
+oxfiltdailyA4 <- seedwashdaily$PO4AFltAN.Ox
+configdaily <- seedwashdaily$po3b4afxbdi
+
+#soda concentration in ton/hr
+sodaconcdailyA4 <- c(1:length(feedflowdailyA4))
+for (i in 1:length(sodaconcdailyA4)){
+  sodaconcdailyA4[i] <- feedflowdailyA4[i]*seedwashdaily$POFeedAN.C[i]/1000
+}
+
+
+dailydataA4 <- data.frame(time = dailytimestep,           #day
+                          status = statusdailyA4,
+                          config = configdaily,
+                          outputspo = outputspodaily,     #%
+                          outputsoda = outputsodadaily,   #g/l
+                          throughput = throughputdaily,   #t/h
+                          feedspo = spodaily,             #%
+                          feedsoda = feedsodadaily,       #g/l
+                          feeddensity = feeddensitydaily, #SG
+                          drumspeed = drumspeeddailyA4,   #RPM
+                          bathlevel = bathleveldailyA4,   #%
+                          vacuum = vacuumdailyA4,         #kPa
+                          feedflow = feedflowdailyA4,     #kl/h
+                          flocflow = flocflowdailyA4,     #kl/h
+                          cakewash = cakewashdailyA4,     #kl/h
+                          clothwash = clothwashdailyA4,   #kl/h
+                          sodafiltrate = sodafiltdailyA4, #g/l
+                          oxfiltrate = oxfiltdailyA4,     #g/l
+                          sodaconc = sodaconcdailyA4)     #t/h
+
+
+multipledailyA4 <- dailydataA4 %>%
+  filter(status == 'Run' & config == '4A') %>%
+  gather(type, data, outputspo:sodaconc)
+
+ggplot(multipledailyA4, aes(x=time, y=data, color = type)) + geom_line() +
+  xlab("Time (day)") + ggtitle("Daily Filter 4A Data Comparison")
+# ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
+
+#observed against Output Soda Conc.
+drumspeedA4 <- multipledailyA4 %>%
+  filter(type == 'drumspeed')
+ggplot(drumspeedA4, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Drum Speed (RPM)") +
+  ggtitle("Daily Filter 4A Drum Speed")
+
+
+bathlevelA4 <- multipledailyA4 %>%
+  filter( type == 'bathlevel')
+ggplot(bathlevelA4, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) + 
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Bath Level (%)") +
+  ggtitle("Daily Filter 4A Bath Level")
+
+
+vacuumA4 <- multipledailyA4 %>%
+  filter( type == 'vacuum')
+ggplot(vacuumA4, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Vacuum Pressure (kPa)") +
+  ggtitle("Daily Filter 4A Vacuum Pressure")
+
+
+feedflowA4 <- multipledailyA4 %>%
+  filter( type == 'feedflow')
+ggplot(feedflowA4, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Feed Flow (kl/h)") +
+  ggtitle("Daily Filter 4A Feed Flow")
+
+
+flocflowA4 <- multipledailyA4 %>%
+  filter(type == 'flocflow')
+ggplot(flocflowA4, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Floc Flow (kl/h)") +
+  ggtitle("Daily Filter 4A Floc Flow")
+
+
+cakewashA4 <- multipledailyA4 %>%
+  filter( type == 'cakewash')
+ggplot(cakewashA4, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Cake Wash Flow (kl/h)") +
+  ggtitle("Daily Filter 4A Cake Wash Flow")
+
+
+clothwashA4 <- multipledailyA4 %>%
+  filter( type == 'clothwash')
+ggplot(clothwashA4, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Cloth Wash Flow (kl/h)") +
+  ggtitle("Daily Filter 4A Cloth Wash Flow")
+
+
+sodafiltrateA4 <- multipledailyA4 %>%
+  filter( type == 'sodafiltrate')
+ggplot(sodafiltrateA4, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Filtrate Soda Conc. (g/l)") +
+  ggtitle("Daily Filter 4A Filtrate Soda Conc.")
+
+
+oxfiltrateA4 <- multipledailyA4 %>%
+  filter( type == 'oxfiltrate')
+ggplot(oxfiltrateA4, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Filtrate Oxalate (%)") +
+  ggtitle("Daily Filter 4A Filtrate Oxalate")
+
+
+sodaconcA4 <- multipledailyA4 %>%
+  filter( type == 'sodaconc')
+ggplot(sodaconcA4, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Inlet Soda (t/h)") +
+  ggtitle("Daily Filter 4A Inlet Soda")
+
+
+#-------------------------------------------------------------------------------------------
+#extract 1B data from daily observation
+statusdailyB1 <- seedwashdaily$PO1BFOLXBDI
+drumspeeddailyB1 <- seedwashdaily$PO1BFDrumSTPV
+bathleveldailyB1 <- seedwashdaily$PO1BFBathLCPV
+vacuumdailyB1 <- seedwashdaily$PO1BVacPCPV
+feedflowdailyB1 <- seedwashdaily$PO1BFRSFFCPV
+flocflowdailyB1 <- seedwashdaily$PO1FlocFTPV...149
+cakewashdailyB1 <- seedwashdaily$PO1BFCaSFTPV
+clothwashdailyB1 <- seedwashdaily$PO1BFCoSFTPV
+sodafiltdailyB1 <- seedwashdaily$PO1BFiltATPV
+oxfiltdailyB1 <- seedwashdaily$PO1AN.Ox...161
+
+
+dailydataB1 <- data.frame(time = dailytimestep,           #day
+                          status = statusdailyB1,
+                          outputspo = outputspodaily,     #%
+                          outputsoda = outputsodadaily,   #g/l
+                          throughput = throughputdaily,   #t/h
+                          feedspo = spodaily,         #%
+                          feedsoda = feedsodadaily,       #g/l
+                          feeddensity = feeddensitydaily, #SG
+                          drumspeed = drumspeeddailyB1,   #RPM
+                          bathlevel = bathleveldailyB1,   #%
+                          vacuum = vacuumdailyB1,         #kPa
+                          feedflow = feedflowdailyB1,     #kl/h
+                          flocflow = flocflowdailyB1,     #kl/h
+                          cakewash = cakewashdailyB1,     #kl/h
+                          clothwash = clothwashdailyB1,   #kl/h
+                          sodafiltrate = sodafiltdailyB1, #g/l
+                          oxfiltrate = oxfiltdailyB1)     #g/l
+
+
+multipledailyB1 <- dailydataB1 %>%
+  filter(status == 'On') %>%
+  gather(type, data, outputspo:oxfiltrate)
+
+ggplot(multipledailyB1, aes(x=time, y=data, color = type)) + geom_line() +
+  xlab("Time (day)") + ggtitle("Daily Filter 1B Data Comparison")
+# ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
+
+#observed against Output Soda Conc.
+drumspeedB1 <- multipledailyB1 %>%
+  filter(type == 'drumspeed')
+ggplot(drumspeedB1, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Drum Speed (RPM)") +
+  ggtitle("Daily Filter 1B Drum Speed")
+
+
+bathlevelB1 <- multipledailyB1 %>%
+  filter( type == 'bathlevel')
+ggplot(bathlevelB1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) + 
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Bath Level (%)") +
+  ggtitle("Daily Filter 1B Bath Level")
+
+
+vacuumB1 <- multipledailyB1 %>%
+  filter( type == 'vacuum')
+ggplot(vacuumB1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Vacuum Pressure (kPa)") +
+  ggtitle("Daily Filter 1B Vacuum Pressure")
+
+
+feedflowB1 <- multipledailyB1 %>%
+  filter( type == 'feedflow')
+ggplot(feedflowB1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Feed Flow (kl/h)") +
+  ggtitle("Daily Filter 1B Feed Flow")
+
+
+flocflowB1 <- multipledailyB1 %>%
+  filter(type == 'flocflow')
+ggplot(flocflowB1, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Floc Flow (kl/h)") +
+  ggtitle("Daily Filter 1B Floc Flow")
+
+
+cakewashB1 <- multipledailyB1 %>%
+  filter( type == 'cakewash')
+ggplot(cakewashB1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Cake Wash Flow (kl/h)") +
+  ggtitle("Daily Filter 1B Cake Wash Flow")
+
+
+clothwashB1 <- multipledailyB1 %>%
+  filter( type == 'clothwash')
+ggplot(clothwashB1, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Cloth Wash Flow (kl/h)") +
+  ggtitle("Daily Filter 1B Cloth Wash Flow")
+
+
+sodafiltrateB1 <- multipledailyB1 %>%
+  filter( type == 'sodafiltrate')
+ggplot(sodafiltrateB1, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Filtrate Soda Conc. (g/l)") +
+  ggtitle("Daily Filter 1B Filtrate Soda Conc.")
+
+
+oxfiltrateB1 <- multipledailyB1 %>%
+  filter( type == 'oxfiltrate')
+ggplot(oxfiltrateB1, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Filtrate Oxalate (%)") +
+  ggtitle("Daily Filter 1B Filtrate Oxalate")
+
+
+#-------------------------------------------------------------------------------------------
+#extract 2B data from daily observation
+statusdailyB2 <- seedwashdaily$PO2BFOLXBDI
+drumspeeddailyB2 <- seedwashdaily$PO2BFDrumSTPV
+bathleveldailyB2 <- seedwashdaily$PO2BFBathLCPV
+vacuumdailyB2 <- seedwashdaily$PO2BVacPCPV
+feedflowdailyB2 <- seedwashdaily$PO2BFRSFFCPV
+flocflowdailyB2 <- seedwashdaily$PO1FlocFTPV...171
+cakewashdailyB2 <- seedwashdaily$PO2BFCaSFTPV
+clothwashdailyB2 <- seedwashdaily$PO2BFCoSFTPV
+sodafiltdailyB2 <- seedwashdaily$PO2BFiltATPV
+oxfiltdailyB2 <- seedwashdaily$PO1AN.Ox...183
+
+
+dailydataB2 <- data.frame(time = dailytimestep,           #day
+                          status = statusdailyB2,
+                          outputspo = outputspodaily,     #%
+                          outputsoda = outputsodadaily,   #g/l
+                          throughput = throughputdaily,   #t/h
+                          feedspo = spodaily,         #%
+                          feedsoda = feedsodadaily,       #g/l
+                          feeddensity = feeddensitydaily, #SG
+                          drumspeed = drumspeeddailyB2,   #RPM
+                          bathlevel = bathleveldailyB2,   #%
+                          vacuum = vacuumdailyB2,         #kPa
+                          feedflow = feedflowdailyB2,     #kl/h
+                          flocflow = flocflowdailyB2,     #kl/h
+                          cakewash = cakewashdailyB2,     #kl/h
+                          clothwash = clothwashdailyB2,   #kl/h
+                          sodafiltrate = sodafiltdailyB2, #g/l
+                          oxfiltrate = oxfiltdailyB2)     #g/l
+
+
+multipledailyB2 <- dailydataB2 %>%
+  filter(status == 'On') %>%
+  gather(type, data, outputspo:oxfiltrate)
+
+ggplot(multipledailyB2, aes(x=time, y=data, color = type)) + geom_line() +
+  xlab("Time (day)") + ggtitle("Daily Filter 2B Data Comparison")
+# ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
+
+#observed against Output Soda Conc.
+drumspeedB2 <- multipledailyB2 %>%
+  filter(type == 'drumspeed')
+ggplot(drumspeedB2, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Drum Speed (RPM)") +
+  ggtitle("Daily Filter 2B Drum Speed")
+
+
+bathlevelB2 <- multipledailyB2 %>%
+  filter( type == 'bathlevel')
+ggplot(bathlevelB2, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) + 
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Bath Level (%)") +
+  ggtitle("Daily Filter 2B Bath Level")
+
+
+vacuumB2 <- multipledailyB2 %>%
+  filter(type == 'outpoutsoda'| type == 'vacuum')
+ggplot(vacuumB2, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Vacuum Pressure (kPa)") +
+  ggtitle("Daily Filter 2B Vacuum Pressure")
+
+
+feedflowB2 <- multipledailyB2 %>%
+  filter( type == 'feedflow')
+ggplot(feedflowB2, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Feed Flow (kl/h)") +
+  ggtitle("Daily Filter 2B Feed Flow")
+
+
+flocflowB2 <- multipledailyB2 %>%
+  filter(type == 'flocflow')
+ggplot(flocflowB2, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Floc Flow (kl/h)") +
+  ggtitle("Daily Filter 2B Floc Flow")
+
+
+cakewashB2 <- multipledailyB2 %>%
+  filter( type == 'cakewash')
+ggplot(cakewashB2, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Cake Wash Flow (kl/h)") +
+  ggtitle("Daily Filter 2B Cake Wash Flow")
+
+
+clothwashB2 <- multipledailyB2 %>%
+  filter( type == 'clothwash')
+ggplot(clothwashB2, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Cloth Wash Flow (kl/h)") +
+  ggtitle("Daily Filter 2B Cloth Wash Flow")
+
+
+sodafiltrateB2 <- multipledailyB2 %>%
+  filter( type == 'sodafiltrate')
+ggplot(sodafiltrateB2, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Filtrate Soda Conc. (g/l)") +
+  ggtitle("Daily Filter 2B Filtrate Soda Conc.")
+
+
+oxfiltrateB2 <- multipledailyB2 %>%
+  filter( type == 'oxfiltrate')
+ggplot(oxfiltrateB2, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Filtrate Oxalate (%)") +
+  ggtitle("Daily Filter 2B Filtrate Oxalate")
+
+
+#------------------------------------------------------------------------------------------
+#extract 3B data from daily observation
+multipledailyB3 <- dailydataA4 %>%
+  filter(status == 'Run' & config == '3B') %>%
+  gather(type, data, outputspo:sodaconc)
+
+ggplot(multipledailyB3, aes(x=time, y=data, color = type)) + geom_line() +
+  xlab("Time (day)") + ggtitle("Daily Filter 3B Data Comparison")
+# ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
+
+#observed against Output Soda Conc.
+drumspeedB3 <- multipledailyB3 %>%
+  filter(type == 'drumspeed')
+ggplot(drumspeedB3, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Drum Speed (RPM)") +
+  ggtitle("Daily Filter 3B Drum Speed")
+
+
+bathlevelB3 <- multipledailyB3 %>%
+  filter( type == 'bathlevel')
+ggplot(bathlevelB3, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) + 
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Bath Level (%)") +
+  ggtitle("Daily Filter 3B Bath Level")
+
+
+vacuumB3 <- multipledailyB3 %>%
+  filter( type == 'vacuum')
+ggplot(vacuumB3, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Vacuum Pressure (kPa)") +
+  ggtitle("Daily Filter 3B Vacuum Pressure")
+
+
+feedflowB3 <- multipledailyB3 %>%
+  filter( type == 'feedflow')
+ggplot(feedflowB3, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Feed Flow (kl/h)") +
+  ggtitle("Daily Filter 3B Feed Flow")
+
+
+flocflowB3 <- multipledailyB3 %>%
+  filter(type == 'flocflow')
+ggplot(flocflowB3, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Floc Flow (kl/h)") +
+  ggtitle("Daily Filter 3B Floc Flow")
+
+
+cakewashB3 <- multipledailyB3 %>%
+  filter( type == 'cakewash')
+ggplot(cakewashB3, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Cake Wash Flow (kl/h)") +
+  ggtitle("Daily Filter 3B Cake Wash Flow")
+
+
+clothwashB3 <- multipledailyB3 %>%
+  filter( type == 'clothwash')
+ggplot(clothwashB3, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Cloth Wash Flow (kl/h)") +
+  ggtitle("Daily Filter 3B Cloth Wash Flow")
+
+
+sodafiltrateB3 <- multipledailyB3 %>%
+  filter( type == 'sodafiltrate')
+ggplot(sodafiltrateB3, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Filtrate Soda Conc. (g/l)") +
+  ggtitle("Daily Filter 3B Filtrate Soda Conc.")
+
+
+oxfiltrateB3 <- multipledailyB3 %>%
+  filter( type == 'oxfiltrate')
+ggplot(oxfiltrateB3, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (day)") + ylab("Filtrate Oxalate (%)") +
+  ggtitle("Daily Filter 3B Filtrate Oxalate")
+
+
+
+#---------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------
+#extract feed data from 30mins observation (2017)
+outputspo30min2017 <- seedwash30min2017$PONthTkAN.Ox
+outputsoda30min2017 <- seedwash30min2017$POSOFATPV.S
+throughput30min2017 <- seedwash30min2017$POFeedMQPV
+spo30min2017 <- seedwash30min2017$POFeedAN.Ox
+feedsoda30min2017 <- seedwash30min2017$POFeedAN.C
+feeddensity30min2017 <- seedwash30min2017$POFeedDTPV
+
+timestep30min2017 <- seq(616, 0, by = -0.5)
+
+counterspo2017 <- 0
+counterfeedsoda2017 <- 0
+counteroutputspo2017 <- 0
+modspo30min2017 <- length(spo30min2017)
+modfeedsoda30min2017 <- length(feedsoda30min2017)
+modoutputspo30min2017 <- length(outputspo30min2017)
+
+
+for(i in length(spo30min2017):1){
+  if (is.na(spo30min2017[i]) == FALSE){
+    counterspo2017 <- spo30min2017[i]
+    modspo30min2017[i] <- spo30min2017[i]
+  }
+  else if (is.na(spo30min2017[i]) == TRUE & counterspo2017 > 0){
+    modspo30min2017[i] <- counterspo2017
+  }
+  else if (is.na(spo30min2017[i]) == TRUE){
+    modspo30min2017[i] <- spo30min2017[i]
+  }
+  
+  if (is.na(feedsoda30min2017[i]) == FALSE){
+    counterfeedsoda2017 <- feedsoda30min2017[i]
+    modfeedsoda30min2017[i] <- feedsoda30min2017[i]
+  }
+  else if (is.na(feedsoda30min2017[i]) == TRUE & counterfeedsoda2017 > 0){
+    modfeedsoda30min2017[i] <- counterfeedsoda2017
+  }
+  else if (is.na(feedsoda30min2017[i]) == TRUE){
+    modfeedsoda30min2017[i] <- feedsoda30min2017[i]
+  }
+  
+  if (is.na(outputspo30min2017[i]) == FALSE){
+    counteroutputspo2017 <- outputspo30min2017[i]
+    modoutputspo30min2017[i] <- outputspo30min2017[i]
+  }
+  else if (is.na(outputspo30min2017[i]) == TRUE & counteroutputspo2017 > -0.1){
+    modoutputspo30min2017[i] <- counteroutputspo2017
+  }
+  else if (is.na(outputspo30min2017[i]) == TRUE){
+    modoutputspo30min2017[i] <- outputspo30min2017[i]
+  }
+}
+
+data30min2017 <- data.frame(time = timestep30min2017,           #day
+                            outputspo = modoutputspo30min2017,  #%
+                            outputsoda = outputsoda30min2017,   #g/l
+                            throughput = throughput30min2017,   #t/h
+                            feedspo = modspo30min2017,          #%
+                            feedsoda = modfeedsoda30min2017,    #g/l
+                            feeddensity = feeddensity30min2017) #SG
+
+
+multiple30min2017 <- data30min2017 %>%
+  gather(type, data, outputspo:feeddensity)
+
+ggplot(multiple30min2017, aes(x=time, y=data, color = type)) + 
+  geom_line(na.rm = TRUE) + 
+  xlab("Time (hour)") + ggtitle("Feed Data Comparison")
+# ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
+
+#observed against Output Soda Conc.
+outputspomin2017 <- multiple30min2017 %>%
+  filter(type == 'outputspo')
+ggplot(outputspomin2017, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) +
+  xlab("Time (hour)") + ylab("Output SPO (%)") +
+  ggtitle("2017 Output SPO")
+
+outputsodamin2017 <- multiple30min2017 %>%
+  filter(type == 'outputsoda')
+ggplot(outputsodamin2017, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) +
+  xlab("Time (hour)") + ylab("Output Soda Conc. (g/l)") +
+  ggtitle("2017 Output Soda Conc.")
+
+throughputmin2017 <- multiple30min2017 %>%
+  filter( type == 'throughput')
+ggplot(throughputmin2017, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Throughput (t/h)") +
+  ggtitle("2017 Feed Throughput")
+
+
+spomin2017 <- multiple30min2017 %>%
+  filter( type == 'feedspo')
+ggplot(spomin2017, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Solid Phase Oxalate (%)") +
+  ggtitle("2017 Feed Solid Phase Oxalate")
+
+
+feedsodamin2017 <- multiple30min2017 %>%
+  filter( type == 'feedsoda')
+ggplot(feedsodamin2017, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Feed Soda Conc. (g/l)") +
+  ggtitle("2017 Feed Soda Conc.")
+
+
+feeddensitymin2017 <- multiple30min2017 %>%
+  filter( type == 'feeddensity')
+ggplot(feeddensitymin2017, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Feed Density (SG)") +
+  ggtitle("2017 Feed Density")
+
+
+#------------------------------------------------------------------------------------------------
+#extract 1A data from 30mins observation
+status30min2017A1 <- seedwash30min2017$PO1AFOLXBDI
+drumspeed30min2017A1 <- seedwash30min2017$PO1AFDrumSTPV
+bathlevel30min2017A1 <- seedwash30min2017$PO1ABathLCPV
+vacuum30min2017A1 <- seedwash30min2017$PO1AVacPCPV
+feedflow30min2017A1 <- seedwash30min2017$PO1FeedFCPV
+flocflow30min2017A1 <- seedwash30min2017$PO1FlocFTPV...17
+cakewash30min2017A1 <- seedwash30min2017$PO1ASprayFCPV
+clothwash30min2017A1 <- seedwash30min2017$PO1AFCoSFTPV
+sodafilt30min2017A1 <- seedwash30min2017$PO1AFltAN.C
+oxfilt30min2017A1 <- seedwash30min2017$PO1AFltAN.Ox
+
+#soda concentration in ton/hr
+sodaconc30min2017A1 <- c(1:length(feedflow30min2017A1))
+for (i in 1:length(sodaconc30min2017A1)){
+  sodaconc30min2017A1[i] <- feedflow30min2017A1[i]*modfeedsoda30min2017[i]/1000
+}
+
+countersodafiltrate30min2017A1 <- 0
+counteroxfiltrate30min2017A1 <- 0
+modsodafiltrate30min2017A1 <- length(sodafilt30min2017A1)
+modoxfiltrate30min2017A1 <- length(oxfilt30min2017A1)
+
+for(i in length(sodafilt30min2017A1):1){
+  if (is.na(sodafilt30min2017A1[i]) == FALSE){
+    countersodafiltrate30min2017A1 <- sodafilt30min2017A1[i]
+    modsodafiltrate30min2017A1[i] <- sodafilt30min2017A1[i]
+  }
+  else if (is.na(sodafilt30min2017A1[i]) == TRUE & countersodafiltrate30min2017A1 > 0){
+    modsodafiltrate30min2017A1[i] <- countersodafiltrate30min2017A1
+  }
+  else if (is.na(sodafilt30min2017A1[i]) == TRUE){
+    modsodafiltrate30min2017A1[i] <- sodafilt30min2017A1[i]
+  }
+  
+  if (is.na(oxfilt30min2017A1[i]) == FALSE){
+    counteroxfiltrate30min2017A1 <- oxfilt30min2017A1[i]
+    modoxfiltrate30min2017A1[i] <- oxfilt30min2017A1[i]
+  }
+  else if (is.na(oxfilt30min2017A1[i]) == TRUE & counteroxfiltrate30min2017A1 > 0){
+    modoxfiltrate30min2017A1[i] <- counteroxfiltrate30min2017A1
+  }
+  else if (is.na(oxfilt30min2017A1[i]) == TRUE){
+    modoxfiltrate30min2017A1[i] <- oxfilt30min2017A1[i]
+  }
+}
+
+data30min2017A1 <- data.frame(time = timestep30min2017,           #day
+                              status = status30min2017A1,
+                              outputspo = modoutputspo30min2017,     #%
+                              outputsoda = outputsoda30min2017,   #g/l
+                              throughput = throughput30min2017,   #t/h
+                              feedspo = modspo30min2017,      #%
+                              feedsoda = modfeedsoda30min2017,    #g/l
+                              feeddensity = feeddensity30min2017, #SG
+                              drumspeed = drumspeed30min2017A1,   #RPM
+                              bathlevel = bathlevel30min2017A1,   #%
+                              vacuum = vacuum30min2017A1,         #kPa
+                              feedflow = feedflow30min2017A1,     #kl/h
+                              flocflow = flocflow30min2017A1,     #kl/h
+                              cakewash = cakewash30min2017A1,     #kl/h
+                              clothwash = clothwash30min2017A1,   #kl/h
+                              sodafiltrate = modsodafiltrate30min2017A1, #g/l
+                              oxfiltrate = modoxfiltrate30min2017A1,     #g/l
+                              sodaconc = sodaconc30min2017A1)     #t/h
+
+
+multiple30min2017A1 <- data30min2017A1 %>%
+  filter(status == 'On') %>%
+  gather(type, data, outputspo:sodaconc)
+
+ggplot(multiple30min2017A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  xlab("Time (hour)") + ggtitle("Filter 1A Data Comparison")
+# ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
+
+#observed against Output Soda Conc.
+drumspeedmin2017A1 <- multiple30min2017A1 %>%
+  filter(type == 'drumspeed')
+ggplot(drumspeedmin2017A1, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Drum Speed (RPM)") +
+  ggtitle("2017 Filter 1A Drum Speed")
+
+
+bathlevelmin2017A1 <- multiple30min2017A1 %>%
+  filter( type == 'bathlevel')
+ggplot(bathlevelmin2017A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) + 
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Bath Level (%)") +
+  ggtitle("2017 Filter 1A Bath Level")
+
+
+vacuummin2017A1 <- multiple30min2017A1 %>%
+  filter( type == 'vacuum')
+ggplot(vacuummin2017A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Vacuum Pressure (kPa)") +
+  ggtitle("2017 Filter 1A Vacuum Pressure")
+
+
+feedflowmin2017A1 <- multiple30min2017A1 %>%
+  filter( type == 'feedflow')
+ggplot(feedflowmin2017A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Feed Flow (kl/h)") +
+  ggtitle("2017 Filter 1A Feed Flow")
+
+
+flocflowmin2017A1 <- multiple30min2017A1 %>%
+  filter(type == 'flocflow')
+ggplot(flocflowmin2017A1, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Floc Flow (kl/h)") +
+  ggtitle("2017 Filter 1A Floc Flow")
+
+
+cakewashmin2017A1 <- multiple30min2017A1 %>%
+  filter( type == 'cakewash')
+ggplot(cakewashmin2017A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Cake Wash Flow (kl/h)") +
+  ggtitle("2017 Filter 1A Cake Wash Flow")
+
+
+clothwashmin2017A1 <- multiple30min2017A1 %>%
+  filter( type == 'clothwash')
+ggplot(clothwashmin2017A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Cloth Wash Flow (kl/h)") +
+  ggtitle("2017 Filter 1A Cloth Wash Flow")
+
+
+sodafiltratemin2017A1 <- multiple30min2017A1 %>%
+  filter( type == 'sodafiltrate')
+ggplot(sodafiltratemin2017A1, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
+  ggtitle("2017 Filter 1A Filtrate Soda Conc.")
+
+
+oxfiltratemin2017A1 <- multiple30min2017A1 %>%
+  filter( type == 'oxfiltrate')
+ggplot(oxfiltratemin2017A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
+  ggtitle("2017 Filter 1A Filtrate Oxalate")
+
+
+sodaconcmin2017A1 <- multiple30min2017A1 %>%
+  filter( type == 'sodaconc')
+ggplot(sodaconcmin2017A1, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Inlet Soda (t/h)") +
+  ggtitle("2017 Filter 1A Inlet Soda")
+
+
+#-------------------------------------------------------------------------------------------
+#extract 1B data from 30min observation
+status30min2017B1 <- seedwash30min2017$PO1BFOLXBDI
+drumspeed30min2017B1 <- seedwash30min2017$PO1BFDrumSTPV
+bathlevel30min2017B1 <- seedwash30min2017$PO1BFBathLCPV
+vacuum30min2017B1 <- seedwash30min2017$PO1BVacPCPV
+feedflow30min2017B1 <- seedwash30min2017$PO1BFRSFFCPV
+flocflow30min2017B1 <- seedwash30min2017$PO1FlocFTPV...148
+cakewash30min2017B1 <- seedwash30min2017$PO1BFCaSFTPV
+clothwash30min2017B1 <- seedwash30min2017$PO1BFCoSFTPV
+sodafilt30min2017B1 <- seedwash30min2017$PO1BFiltATPV
+oxfilt30min2017B1 <- seedwash30min2017$PO1AN.Ox...160
+
+countersodafiltrate30min2017B1 <- 0
+counteroxfiltrate30min2017B1 <- 0
+modsodafiltrate30min2017B1 <- length(sodafilt30min2017B1)
+modoxfiltrate30min2017B1 <- length(oxfilt30min2017B1)
+
+for(i in length(sodafilt30min2017B1):1){
+  if (is.na(sodafilt30min2017B1[i]) == FALSE){
+    countersodafiltrate30min2017B1 <- sodafilt30min2017B1[i]
+    modsodafiltrate30min2017B1[i] <- sodafilt30min2017B1[i]
+  }
+  else if (is.na(sodafilt30min2017B1[i]) == TRUE & countersodafiltrate30min2017B1 > 0){
+    modsodafiltrate30min2017B1[i] <- countersodafiltrate30min2017B1
+  }
+  else if (is.na(sodafilt30min2017B1[i]) == TRUE){
+    modsodafiltrate30min2017B1[i] <- sodafilt30min2017B1[i]
+  }
+  
+  if (is.na(oxfilt30min2017B1[i]) == FALSE){
+    counteroxfiltrate30min2017B1 <- oxfilt30min2017B1[i]
+    modoxfiltrate30min2017B1[i] <- oxfilt30min2017B1[i]
+  }
+  else if (is.na(oxfilt30min2017B1[i]) == TRUE & counteroxfiltrate30min2017B1 > 0){
+    modoxfiltrate30min2017B1[i] <- counteroxfiltrate30min2017B1
+  }
+  else if (is.na(oxfilt30min2017B1[i]) == TRUE){
+    modoxfiltrate30min2017B1[i] <- oxfilt30min2017B1[i]
+  }
+}
+
+data30min2017B1 <- data.frame(time = timestep30min2017,           #day
+                              status = status30min2017B1,
+                              outputspo = modoutputspo30min2017,  #%
+                              outputsoda = outputsoda30min2017,   #g/l
+                              throughput = throughput30min2017,   #t/h
+                              feedspo = modspo30min2017,      #%
+                              feedsoda = modfeedsoda30min2017,    #g/l
+                              feeddensity = feeddensity30min2017, #SG
+                              drumspeed = drumspeed30min2017B1,   #RPM
+                              bathlevel = bathlevel30min2017B1,   #%
+                              vacuum = vacuum30min2017B1,         #kPa
+                              feedflow = feedflow30min2017B1,     #kl/h
+                              flocflow = flocflow30min2017B1,     #kl/h
+                              cakewash = cakewash30min2017B1,     #kl/h
+                              clothwash = clothwash30min2017B1,   #kl/h
+                              sodafiltrate = modsodafiltrate30min2017B1, #g/l
+                              oxfiltrate = modoxfiltrate30min2017B1)     #g/l
+
+
+multiple30min2017B1 <- data30min2017B1 %>%
+  filter(status == 'On') %>%
+  gather(type, data, outputspo:oxfiltrate)
+
+ggplot(multiple30min2017B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  xlab("Time (hour)") + ggtitle("2017 Filter 1B Data Comparison")
+# ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
+
+#observed against Output Soda Conc.
+drumspeedmin2017B1 <- multiple30min2017B1 %>%
+  filter(type == 'drumspeed')
+ggplot(drumspeedmin2017B1, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Drum Speed (RPM)") +
+  ggtitle("2017 Filter 1B Drum Speed")
+
+
+bathlevelmin2017B1 <- multiple30min2017B1 %>%
+  filter( type == 'bathlevel')
+ggplot(bathlevelmin2017B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) + 
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Bath Level (%)") +
+  ggtitle("2017 Filter 1B Bath Level")
+
+
+vacuummin2017B1 <- multiple30min2017B1 %>%
+  filter( type == 'vacuum')
+ggplot(vacuummin2017B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Vacuum Pressure (kPa)") +
+  ggtitle("2017 Filter 1B Vacuum Pressure")
+
+
+feedflowmin2017B1 <- multiple30min2017B1 %>%
+  filter( type == 'feedflow')
+ggplot(feedflowmin2017B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Feed Flow (kl/h)") +
+  ggtitle("2017 Filter 1B Feed Flow")
+
+
+flocflowmin2017B1 <- multiple30min2017B1 %>%
+  filter(type == 'flocflow')
+ggplot(flocflowmin2017B1, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Floc Flow (kl/h)") +
+  ggtitle("2017 Filter 1B Floc Flow")
+
+
+cakewashmin2017B1 <- multiple30min2017B1 %>%
+  filter( type == 'cakewash')
+ggplot(cakewashmin2017B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Cake Wash Flow (kl/h)") +
+  ggtitle("2017 Filter 1B Cake Wash Flow")
+
+
+clothwashmin2017B1 <- multiple30min2017B1 %>%
+  filter( type == 'clothwash')
+ggplot(clothwashmin2017B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Cloth Wash Flow (kl/h)") +
+  ggtitle("2017 Filter 1B Cloth Wash Flow")
+
+
+sodafiltratemin2017B1 <- multiple30min2017B1 %>%
+  filter( type == 'sodafiltrate')
+ggplot(sodafiltratemin2017B1, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
+  ggtitle("2017 Filter 1B Filtrate Soda Conc.")
+
+
+oxfiltratemin2017B1 <- multiple30min2017B1 %>%
+  filter( type == 'oxfiltrate')
+ggplot(oxfiltratemin2017B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
+  ggtitle("2017 Filter 1B Filtrate Oxalate")
+
+
+#---------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------
+#extract feed data from 30mins observation (2018)
+outputspo30min2018 <- seedwash30min2018$PONthTkAN.Ox
+outputsoda30min2018 <- seedwash30min2018$POSOFATPV.S
+throughput30min2018 <- seedwash30min2018$POFeedMQPV
+spo30min2018 <- seedwash30min2018$POFeedAN.Ox
+feedsoda30min2018 <- seedwash30min2018$POFeedAN.C
+feeddensity30min2018 <- seedwash30min2018$POFeedDTPV
+
+timestep30min2018 <- seq(616, 0, by = -0.5)
+
+counterspo2018 <- 0
+counterfeedsoda2018 <- 0
+counteroutputspo2018 <- 0
+modspo30min2018 <- length(spo30min2018)
+modfeedsoda30min2018 <- length(feedsoda30min2018)
+modoutputspo30min2018 <- length(outputspo30min2018)
+
+for(i in length(spo30min2018):1){
+  if (is.na(spo30min2018[i]) == FALSE){
+    counterspo2018 <- spo30min2018[i]
+    modspo30min2018[i] <- spo30min2018[i]
+  }
+  else if (is.na(spo30min2018[i]) == TRUE & counterspo2018 > 0){
+    modspo30min2018[i] <- counterspo2018
+  }
+  else if (is.na(spo30min2018[i]) == TRUE){
+    modspo30min2018[i] <- spo30min2018[i]
+  }
+  
+  if (is.na(feedsoda30min2018[i]) == FALSE){
+    counterfeedsoda2018 <- feedsoda30min2018[i]
+    modfeedsoda30min2018[i] <- feedsoda30min2018[i]
+  }
+  else if (is.na(feedsoda30min2018[i]) == TRUE & counterfeedsoda2018 > 0){
+    modfeedsoda30min2018[i] <- counterfeedsoda2018
+  }
+  else if (is.na(feedsoda30min2018[i]) == TRUE){
+    modfeedsoda30min2018[i] <- feedsoda30min2018[i]
+  }
+  
+  if (is.na(outputspo30min2018[i]) == FALSE){
+    counteroutputspo2018 <- outputspo30min2018[i]
+    modoutputspo30min2018[i] <- outputspo30min2018[i]
+  }
+  else if (is.na(outputspo30min2018[i]) == TRUE & counteroutputspo2018 > -0.1){
+    modoutputspo30min2018[i] <- counteroutputspo2018
+  }
+  else if (is.na(outputspo30min2018[i]) == TRUE){
+    modoutputspo30min2018[i] <- outputspo30min2018[i]
+  }
+}
+
+data30min2018 <- data.frame(time = timestep30min2018,           #day
+                            outputspo = modoutputspo30min2018,  #%
+                            outputsoda = outputsoda30min2018,   #g/l
+                            throughput = throughput30min2018,   #t/h
+                            feedspo = modspo30min2018,          #%
+                            feedsoda = modfeedsoda30min2018,    #g/l
+                            feeddensity = feeddensity30min2018) #SG
+
+
+multiple30min2018 <- data30min2018 %>%
+  gather(type, data, outputspo:feeddensity)
+
+ggplot(multiple30min2018, aes(x=time, y=data, color = type)) + 
+  geom_line(na.rm = TRUE) + 
+  xlab("Time (hour)") + ggtitle("2018 Feed Data Comparison")
+# ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
+
+#observed against Output Soda Conc.
+outputspomin2018 <- multiple30min2018 %>%
+  filter(type == 'outputspo')
+ggplot(outputspomin2018, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) +
+  xlab("Time (hour)") + ylab("Output SPO (%)") +
+  ggtitle("2018 Output SPO")
+
+outputsodamin2018 <- multiple30min2018 %>%
+  filter(type == 'outputsoda')
+ggplot(outputsodamin2018, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) +
+  xlab("Time (hour)") + ylab("Output Soda Conc. (g/l)") +
+  ggtitle("2018 Output Soda Conc.")
+
+throughputmin2018 <- multiple30min2018 %>%
+  filter( type == 'throughput')
+ggplot(throughputmin2018, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Throughput (t/h)") +
+  ggtitle("Feed Throughput")
+
+
+spomin2018 <- multiple30min2018 %>%
+  filter( type == 'feedspo')
+ggplot(spomin2018, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Solid Phase Oxalate (%)") +
+  ggtitle("2018 Feed Solid Phase Oxalate")
+
+
+feedsodamin2018 <- multiple30min2018 %>%
+  filter( type == 'feedsoda')
+ggplot(feedsodamin2018, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Feed Soda Conc. (g/l)") +
+  ggtitle("2018 Feed Soda Conc.")
+
+
+feeddensitymin2018 <- multiple30min2018 %>%
+  filter( type == 'feeddensity')
+ggplot(feeddensitymin2018, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Feed Density (SG)") +
+  ggtitle("2018 Feed Density")
+
+
+#------------------------------------------------------------------------------------------------
+#extract 1A data from 30mins observation
+status30min2018A1 <- seedwash30min2018$PO1AFOLXBDI
+drumspeed30min2018A1 <- seedwash30min2018$PO1AFDrumSTPV
+bathlevel30min2018A1 <- seedwash30min2018$PO1ABathLCPV
+vacuum30min2018A1 <- seedwash30min2018$PO1AVacPCPV
+feedflow30min2018A1 <- seedwash30min2018$PO1FeedFCPV
+flocflow30min2018A1 <- seedwash30min2018$PO1FlocFTPV...17
+cakewash30min2018A1 <- seedwash30min2018$PO1ASprayFCPV
+clothwash30min2018A1 <- seedwash30min2018$PO1AFCoSFTPV
+sodafilt30min2018A1 <- seedwash30min2018$PO1AFltAN.C
+oxfilt30min2018A1 <- seedwash30min2018$PO1AFltAN.Ox
+
+#soda concentration in ton/hr
+sodaconc30min2018A1 <- c(1:length(feedflow30min2018A1))
+for (i in 1:length(sodaconc30min2018A1)){
+  sodaconc30min2018A1[i] <- feedflow30min2018A1[i]*modfeedsoda30min2018[i]/1000
+}
+
+countersodafiltrate30min2018A1 <- 0
+counteroxfiltrate30min2018A1 <- 0
+modsodafiltrate30min2018A1 <- length(sodafilt30min2018A1)
+modoxfiltrate30min2018A1 <- length(oxfilt30min2018A1)
+
+for(i in length(sodafilt30min2018A1):1){
+  if (is.na(sodafilt30min2018A1[i]) == FALSE){
+    countersodafiltrate30min2018A1 <- sodafilt30min2018A1[i]
+    modsodafiltrate30min2018A1[i] <- sodafilt30min2018A1[i]
+  }
+  else if (is.na(sodafilt30min2018A1[i]) == TRUE & countersodafiltrate30min2018A1 > 0){
+    modsodafiltrate30min2018A1[i] <- countersodafiltrate30min2018A1
+  }
+  else if (is.na(sodafilt30min2018A1[i]) == TRUE){
+    modsodafiltrate30min2018A1[i] <- sodafilt30min2018A1[i]
+  }
+  
+  if (is.na(oxfilt30min2018A1[i]) == FALSE){
+    counteroxfiltrate30min2018A1 <- oxfilt30min2018A1[i]
+    modoxfiltrate30min2018A1[i] <- oxfilt30min2018A1[i]
+  }
+  else if (is.na(oxfilt30min2018A1[i]) == TRUE & counteroxfiltrate30min2018A1 > 0){
+    modoxfiltrate30min2018A1[i] <- counteroxfiltrate30min2018A1
+  }
+  else if (is.na(oxfilt30min2018A1[i]) == TRUE){
+    modoxfiltrate30min2018A1[i] <- oxfilt30min2018A1[i]
+  }
+}
+
+data30min2018A1 <- data.frame(time = timestep30min2018,           #day
+                              status = status30min2018A1,
+                              outputspo = modoutputspo30min2018,         #%
+                              outputsoda = outputsoda30min2018,       #g/l
+                              throughput = throughput30min2017,   #t/h
+                              feedspo = modspo30min2018,          #%
+                              feedsoda = modfeedsoda30min2018,    #g/l
+                              feeddensity = feeddensity30min2018, #SG
+                              drumspeed = drumspeed30min2018A1,   #RPM
+                              bathlevel = bathlevel30min2018A1,   #%
+                              vacuum = vacuum30min2018A1,         #kPa
+                              feedflow = feedflow30min2018A1,     #kl/h
+                              flocflow = flocflow30min2018A1,     #kl/h
+                              cakewash = cakewash30min2018A1,     #kl/h
+                              clothwash = clothwash30min2018A1,   #kl/h
+                              sodafiltrate = modsodafiltrate30min2018A1, #g/l
+                              oxfiltrate = modoxfiltrate30min2018A1,     #g/l
+                              sodaconc = sodaconc30min2018A1)     #t/h
+
+
+multiple30min2018A1 <- data30min2018A1 %>%
+  filter(status == 'On') %>%
+  gather(type, data, outputspo:sodaconc)
+
+ggplot(multiple30min2018A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  xlab("Time (hour)") + ggtitle("2018 Filter 1A Data Comparison")
+# ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
+
+#observed against Output Soda Conc.
+drumspeedmin2018A1 <- multiple30min2018A1 %>%
+  filter(type == 'drumspeed')
+ggplot(drumspeedmin2018A1, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Drum Speed (RPM)") +
+  ggtitle("2018 Filter 1A Drum Speed")
+
+
+bathlevelmin2018A1 <- multiple30min2018A1 %>%
+  filter( type == 'bathlevel')
+ggplot(bathlevelmin2018A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) + 
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Bath Level (%)") +
+  ggtitle("2018 Filter 1A Bath Level")
+
+
+vacuummin2018A1 <- multiple30min2018A1 %>%
+  filter( type == 'vacuum')
+ggplot(vacuummin2018A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Vacuum Pressure (kPa)") +
+  ggtitle("2018 Filter 1A Vacuum Pressure")
+
+
+feedflowmin2018A1 <- multiple30min2018A1 %>%
+  filter( type == 'feedflow')
+ggplot(feedflowmin2018A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Feed Flow (kl/h)") +
+  ggtitle("2018 Filter 1A Feed Flow")
+
+
+flocflowmin2018A1 <- multiple30min2018A1 %>%
+  filter(type == 'flocflow')
+ggplot(flocflowmin2018A1, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Floc Flow (kl/h)") +
+  ggtitle("2018 Filter 1A Floc Flow")
+
+
+cakewashmin2018A1 <- multiple30min2018A1 %>%
+  filter( type == 'cakewash')
+ggplot(cakewashmin2018A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Cake Wash Flow (kl/h)") +
+  ggtitle("2018 Filter 1A Cake Wash Flow")
+
+
+clothwashmin2018A1 <- multiple30min2018A1 %>%
+  filter( type == 'clothwash')
+ggplot(clothwashmin2018A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Cloth Wash Flow (kl/h)") +
+  ggtitle("2018 Filter 1A Cloth Wash Flow")
+
+
+sodafiltratemin2018A1 <- multiple30min2018A1 %>%
+  filter( type == 'sodafiltrate')
+ggplot(sodafiltratemin2018A1, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
+  ggtitle("2018 Filter 1A Filtrate Soda Conc.")
+
+
+oxfiltratemin2018A1 <- multiple30min2018A1 %>%
+  filter( type == 'oxfiltrate')
+ggplot(oxfiltratemin2018A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
+  ggtitle("2018 Filter 1A Filtrate Oxalate")
+
+
+sodaconcmin2018A1 <- multiple30min2018A1 %>%
+  filter( type == 'sodaconc')
+ggplot(sodaconcmin2018A1, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Inlet Soda (t/h)") +
+  ggtitle("2018 Filter 1A Inlet Soda")
+
+
+#-------------------------------------------------------------------------------------------
+#extract 1B data from 30min observation
+status30min2018B1 <- seedwash30min2018$PO1BFOLXBDI
+drumspeed30min2018B1 <- seedwash30min2018$PO1BFDrumSTPV
+bathlevel30min2018B1 <- seedwash30min2018$PO1BFBathLCPV
+vacuum30min2018B1 <- seedwash30min2018$PO1BVacPCPV
+feedflow30min2018B1 <- seedwash30min2018$PO1BFRSFFCPV
+flocflow30min2018B1 <- seedwash30min2018$PO1FlocFTPV...148
+cakewash30min2018B1 <- seedwash30min2018$PO1BFCaSFTPV
+clothwash30min2018B1 <- seedwash30min2018$PO1BFCoSFTPV
+sodafilt30min2018B1 <- seedwash30min2018$PO1BFiltATPV
+oxfilt30min2018B1 <- seedwash30min2018$PO1AN.Ox...160
+
+countersodafiltrate30min2018B1 <- 0
+counteroxfiltrate30min2018B1 <- 0
+modsodafiltrate30min2018B1 <- length(sodafilt30min2018B1)
+modoxfiltrate30min2018B1 <- length(oxfilt30min2018B1)
+
+for(i in length(sodafilt30min2018B1):1){
+  if (is.na(sodafilt30min2018B1[i]) == FALSE){
+    countersodafiltrate30min2018B1 <- sodafilt30min2018B1[i]
+    modsodafiltrate30min2018B1[i] <- sodafilt30min2018B1[i]
+  }
+  else if (is.na(sodafilt30min2018B1[i]) == TRUE & countersodafiltrate30min2018B1 > 0){
+    modsodafiltrate30min2018B1[i] <- countersodafiltrate30min2018B1
+  }
+  else if (is.na(sodafilt30min2018B1[i]) == TRUE){
+    modsodafiltrate30min2018B1[i] <- sodafilt30min2018B1[i]
+  }
+  
+  if (is.na(oxfilt30min2018B1[i]) == FALSE){
+    counteroxfiltrate30min2018B1 <- oxfilt30min2018B1[i]
+    modoxfiltrate30min2018B1[i] <- oxfilt30min2018B1[i]
+  }
+  else if (is.na(oxfilt30min2018B1[i]) == TRUE & counteroxfiltrate30min2018B1 > 0){
+    modoxfiltrate30min2018B1[i] <- counteroxfiltrate30min2018B1
+  }
+  else if (is.na(oxfilt30min2018B1[i]) == TRUE){
+    modoxfiltrate30min2018B1[i] <- oxfilt30min2018B1[i]
+  }
+}
+
+data30min2018B1 <- data.frame(time = timestep30min2018,           #day
+                              status = status30min2018B1,
+                              outputspo = modoutputspo30min2018,     #%
+                              outputsoda = outputsoda30min2018,   #g/l
+                              throughput = throughput30min2018,   #t/h
+                              feedspo = modspo30min2018,          #%
+                              feedsoda = modfeedsoda30min2018,    #g/l
+                              feeddensity = feeddensity30min2018, #SG
+                              drumspeed = drumspeed30min2018B1,   #RPM
+                              bathlevel = bathlevel30min2018B1,   #%
+                              vacuum = vacuum30min2018B1,         #kPa
+                              feedflow = feedflow30min2018B1,     #kl/h
+                              flocflow = flocflow30min2018B1,     #kl/h
+                              cakewash = cakewash30min2018B1,     #kl/h
+                              clothwash = clothwash30min2018B1,   #kl/h
+                              sodafiltrate = modsodafiltrate30min2018B1, #g/l
+                              oxfiltrate = modoxfiltrate30min2018B1)     #g/l
+
+
+multiple30min2018B1 <- data30min2018B1 %>%
+  filter(status == 'On') %>%
+  gather(type, data, outputspo:oxfiltrate)
+
+ggplot(multiple30min2018B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  xlab("Time (hour)") + ggtitle("2018 Filter 1B Data Comparison")
+# ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
+
+#observed against Output Soda Conc.
+drumspeedmin2018B1 <- multiple30min2018B1 %>%
+  filter(type == 'drumspeed')
+ggplot(drumspeedmin2018B1, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Drum Speed (RPM)") +
+  ggtitle("2018 Filter 1B Drum Speed")
+
+
+bathlevelmin2018B1 <- multiple30min2018B1 %>%
+  filter( type == 'bathlevel')
+ggplot(bathlevelmin2018B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) + 
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Bath Level (%)") +
+  ggtitle("2018 Filter 1B Bath Level")
+
+
+vacuummin2018B1 <- multiple30min2018B1 %>%
+  filter( type == 'vacuum')
+ggplot(vacuummin2018B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Vacuum Pressure (kPa)") +
+  ggtitle("2018 Filter 1B Vacuum Pressure")
+
+
+feedflowmin2018B1 <- multiple30min2018B1 %>%
+  filter( type == 'feedflow')
+ggplot(feedflowmin2018B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Feed Flow (kl/h)") +
+  ggtitle("2018 Filter 1B Feed Flow")
+
+
+flocflowmin2018B1 <- multiple30min2018B1 %>%
+  filter(type == 'flocflow')
+ggplot(flocflowmin2018B1, aes(x=time, y=data)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Floc Flow (kl/h)") +
+  ggtitle("2018 Filter 1B Floc Flow")
+
+
+cakewashmin2018B1 <- multiple30min2018B1 %>%
+  filter( type == 'cakewash')
+ggplot(cakewashmin2018B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Cake Wash Flow (kl/h)") +
+  ggtitle("2018 Filter 1B Cake Wash Flow")
+
+
+clothwashmin2018B1 <- multiple30min2018B1 %>%
+  filter( type == 'clothwash')
+ggplot(clothwashmin2018B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Cloth Wash Flow (kl/h)") +
+  ggtitle("2018 Filter 1B Cloth Wash Flow")
+
+
+sodafiltratemin2018B1 <- multiple30min2018B1 %>%
+  filter( type == 'sodafiltrate')
+ggplot(sodafiltratemin2018B1, aes(x=time, y=data, color = type)) + geom_line() +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
+  ggtitle("2018 Filter 1B Filtrate Soda Conc.")
+
+
+oxfiltratemin2018B1 <- multiple30min2018B1 %>%
+  filter( type == 'oxfiltrate')
+ggplot(oxfiltratemin2018B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
+  ggtitle("2018 Filter 1B Filtrate Oxalate")
+
+
+
+
 
 
 
@@ -720,5 +2063,3 @@ ggplot(highpass2fin, aes(x=time, y=level, color = type, alpha = type)) + geom_li
   scale_colour_manual(values=c("red", "blue")) + 
   xlab("Time (hour)") + ylab("Bath Level (%)") + 
   ggtitle("High Pass Filter Dataset 2 of 2B Drum Bath Level")
-
-  
