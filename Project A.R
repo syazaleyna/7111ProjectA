@@ -2611,14 +2611,6 @@ if (rtestsodafiltratemin2019B1$n.outliers > 0){
     ggtitle("2019 Filter 1B Filtrate Soda Conc. (filtered)")
 }
 
-fouriersodafiltratemin2019B1 <- abs(fft(filtersodafiltratemin2019B1$data))
-freqfourier <- 1/(onfilterrevDataset1$time/24)
-fourier <- cbind(fourier, freq=freqfourier, onfilterrevDataset1)
-fourier <- fourier[2:1175,]
-fourier <- fourier[1:(length(fourier$fourier)/2),]
-ggplot(fourier, aes(x=freq, y=fourier)) + geom_col() + 
-  xlab("Frequency (1/day)") + ylab("Magnitude") + 
-  ggtitle("Dataset 1: Fourier Transformation of 2B Drum Bath Level")
 
 oxfiltratemin2019B1 <- multiple30min2019B1 %>%
   filter( type == 'oxfiltrate')
