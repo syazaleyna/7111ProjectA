@@ -933,12 +933,12 @@ for(i in length(spo30min2016):1){
 }
 
 data30min2016 <- data.frame(time = timestep30min2016,           #day
-                            outputspo = modoutputspo30min2016,  #%
+                            outputspo = outputspo30min2016,     #%
                             outputsoda = outputsoda30min2016,   #g/l
                             outputalumina = outputalumina30min2016, #kl/h
                             throughput = throughput30min2016,   #t/h
-                            feedspo = modspo30min2016,          #%
-                            feedsoda = modfeedsoda30min2016,    #g/l
+                            feedspo = spo30min2016,             #%
+                            feedsoda = feedsoda30min2016,       #g/l
                             feeddensity = feeddensity30min2016) #SG
 
 
@@ -946,6 +946,9 @@ multiple30min2016 <- data30min2016 %>%
   gather(type, data, outputspo:feeddensity)
 
 ggplot(multiple30min2016, aes(x=time, y=data, color = type)) + 
+  geom_line(data = outputspomin2016[!is.na(outputspomin2016$data),],aes(x=time, y=data)) +
+  geom_line(data=spomin2016[!is.na(spomin2016$data),],aes(x=time, y=data)) +
+  geom_line(data=feedsodamin2016[!is.na(feedsodamin2016$data),], aes(x=time,y=data)) +
   geom_line(na.rm = TRUE) +
   xlab("Time (hour)") + ggtitle("2016 Feed Data Comparison")
 # ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
@@ -953,9 +956,8 @@ ggplot(multiple30min2016, aes(x=time, y=data, color = type)) +
 #observed against Output Soda Conc.
 outputspomin2016 <- multiple30min2016 %>%
   filter(type == 'outputspo')
-ggplot(outputspomin2016, aes(x=time, y=data, color = type)) + 
-  geom_line(alpha = 0.8, na.rm = TRUE) +
-  geom_smooth(method = lm) +
+ggplot(outputspomin2016) + geom_point(aes(x=time, y=data, color = type)) + 
+  geom_line(data = outputspomin2016[!is.na(outputspomin2016$data),],aes(x=time, y=data)) +
   xlab("Time (hour)") + ylab("Output SPO (%)") +
   ggtitle("2016 Output SPO")
 
@@ -982,15 +984,17 @@ ggplot(throughputmin2016, aes(x=time, y=data, color = type)) + geom_line(alpha =
 
 spomin2016 <- multiple30min2016 %>%
   filter( type == 'feedspo')
-ggplot(spomin2016, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Solid Phase Oxalate (%)") +
+ggplot(spomin2016) + geom_point(aes(x=time, y=data, color = type)) + 
+  geom_line(data=spomin2016[!is.na(spomin2016$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Solid Phase Oxalate (%)") +
   ggtitle("2016 Feed Solid Phase Oxalate")
 
 
 feedsodamin2016 <- multiple30min2016 %>%
   filter( type == 'feedsoda')
-ggplot(feedsodamin2016, aes(x=time, y=data, color = type)) + geom_line() +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Feed Soda Conc. (g/l)") +
+ggplot(feedsodamin2016) + geom_point(aes(x=time, y=data, color = type)) + 
+  geom_line(data=feedsodamin2016[!is.na(feedsodamin2016$data),], aes(x=time,y=data)) +
+  xlab("Time (hour)") + ylab("Feed Soda Conc. (g/l)") +
   ggtitle("2016 Feed Soda Conc.")
 
 
@@ -1051,12 +1055,12 @@ for(i in length(sodafilt30min2016A1):1){
 
 data30min2016A1 <- data.frame(time = timestep30min2016,           #day
                               status = status30min2016A1,
-                              outputspo = modoutputspo30min2016,     #%
+                              outputspo = outputspo30min2016,     #%
                               outputsoda = outputsoda30min2016,   #g/l
                               outputalumina = outputalumina30min2016, #kl/h
                               throughput = throughput30min2016,   #t/h
-                              feedspo = modspo30min2016,      #%
-                              feedsoda = modfeedsoda30min2016,    #g/l
+                              feedspo = spo30min2016,      #%
+                              feedsoda = feedsoda30min2016,    #g/l
                               feeddensity = feeddensity30min2016, #SG
                               drumspeed = drumspeed30min2016A1,   #RPM
                               bathlevel = bathlevel30min2016A1,   #%
@@ -1065,8 +1069,8 @@ data30min2016A1 <- data.frame(time = timestep30min2016,           #day
                               flocflow = flocflow30min2016A1,     #kl/h
                               cakewash = cakewash30min2016A1,     #kl/h
                               clothwash = clothwash30min2016A1,   #kl/h
-                              sodafiltrate = modsodafiltrate30min2016A1, #g/l
-                              oxfiltrate = modoxfiltrate30min2016A1,     #g/l
+                              sodafiltrate = sodafilt30min2016A1, #g/l
+                              oxfiltrate = oxfilt30min2016A1,     #g/l
                               sodaconc = sodaconc30min2016A1)     #t/h
 
 
@@ -1130,15 +1134,17 @@ ggplot(clothwashmin2016A1, aes(x=time, y=data, color = type)) + geom_line(alpha 
 
 sodafiltratemin2016A1 <- multiple30min2016A1 %>%
   filter( type == 'sodafiltrate')
-ggplot(sodafiltratemin2016A1, aes(x=time, y=data, color = type)) + geom_line() +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
+ggplot(sodafiltratemin2016A1) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = sodafiltratemin2016A1[!is.na(sodafiltratemin2016A1$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
   ggtitle("2016 Filter 1A Filtrate Soda Conc.")
 
 
 oxfiltratemin2016A1 <- multiple30min2016A1 %>%
   filter( type == 'oxfiltrate')
-ggplot(oxfiltratemin2016A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
+ggplot(oxfiltratemin2016A1) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = oxfiltratemin2016A1[!is.na(oxfiltratemin2016A1$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
   ggtitle("2016 Filter 1A Filtrate Oxalate")
 
 
@@ -1193,12 +1199,12 @@ for(i in length(sodafilt30min2016B1):1){
 
 data30min2016B1 <- data.frame(time = timestep30min2016,           #day
                               status = status30min2016B1,
-                              outputspo = modoutputspo30min2016,  #%
+                              outputspo = outputspo30min2016,  #%
                               outputsoda = outputsoda30min2016,   #g/l
                               outputalumina = outputalumina30min2016, #kl/h
                               throughput = throughput30min2016,   #t/h
-                              feedspo = modspo30min2016,      #%
-                              feedsoda = modfeedsoda30min2016,    #g/l
+                              feedspo = spo30min2016,      #%
+                              feedsoda = feedsoda30min2016,    #g/l
                               feeddensity = feeddensity30min2016, #SG
                               drumspeed = drumspeed30min2016B1,   #RPM
                               bathlevel = bathlevel30min2016B1,   #%
@@ -1207,8 +1213,8 @@ data30min2016B1 <- data.frame(time = timestep30min2016,           #day
                               flocflow = flocflow30min2016B1,     #kl/h
                               cakewash = cakewash30min2016B1,     #kl/h
                               clothwash = clothwash30min2016B1,   #kl/h
-                              sodafiltrate = modsodafiltrate30min2016B1, #g/l
-                              oxfiltrate = modoxfiltrate30min2016B1)     #g/l
+                              sodafiltrate = sodafilt30min2016B1, #g/l
+                              oxfiltrate = oxfilt30min2016B1)     #g/l
 
 
 multiple30min2016B1 <- data30min2016B1 %>%
@@ -1271,15 +1277,17 @@ ggplot(clothwashmin2016B1, aes(x=time, y=data, color = type)) + geom_line(alpha 
 
 sodafiltratemin2016B1 <- multiple30min2016B1 %>%
   filter( type == 'sodafiltrate')
-ggplot(sodafiltratemin2016B1, aes(x=time, y=data, color = type)) + geom_line() +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
+ggplot(sodafiltratemin2016B1) + geom_line(aes(x=time, y=data, color = type)) +
+  geom_line(data = sodafiltratemin2016B1[!is.na(sodafiltratemin2016B1$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
   ggtitle("2016 Filter 1B Filtrate Soda Conc.")
 
 
 oxfiltratemin2016B1 <- multiple30min2016B1 %>%
   filter( type == 'oxfiltrate')
-ggplot(oxfiltratemin2016B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
+ggplot(oxfiltratemin2016B1) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = oxfiltratemin2016B1[!is.na(oxfiltratemin2016B1$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
   ggtitle("2016 Filter 1B Filtrate Oxalate")
 
 
@@ -1340,19 +1348,22 @@ for(i in length(spo30min2017):1){
 }
 
 data30min2017 <- data.frame(time = timestep30min2017,           #day
-                            outputspo = modoutputspo30min2017,  #%
+                            outputspo = outputspo30min2017,  #%
                             outputsoda = outputsoda30min2017,   #g/l
                             outputalumina = outputalumina30min2017, #kl/h
                             throughput = throughput30min2017,   #t/h
-                            feedspo = modspo30min2017,          #%
-                            feedsoda = modfeedsoda30min2017,    #g/l
+                            feedspo = spo30min2017,          #%
+                            feedsoda = feedsoda30min2017,    #g/l
                             feeddensity = feeddensity30min2017) #SG
 
 
 multiple30min2017 <- data30min2017 %>%
   gather(type, data, outputspo:feeddensity)
 
-ggplot(multiple30min2017, aes(x=time, y=data, color = type)) + 
+ggplot(multiple30min2017, aes(x=time, y=data, color = type)) +
+  geom_line(data = outputspomin2017[!is.na(outputspomin2017$data),],aes(x=time, y=data)) +
+  geom_line(data = spomin2017[!is.na(spomin2017$data),],aes(x=time, y=data)) +
+  geom_line(data = feedsodamin2017[!is.na(feedsodamin2017$data),],aes(x=time, y=data)) +
   geom_line(na.rm = TRUE) + 
   xlab("Time (hour)") + ggtitle("2017 Feed Data Comparison")
 # ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
@@ -1360,8 +1371,8 @@ ggplot(multiple30min2017, aes(x=time, y=data, color = type)) +
 #observed against Output Soda Conc.
 outputspomin2017 <- multiple30min2017 %>%
   filter(type == 'outputspo')
-ggplot(outputspomin2017, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-  geom_smooth(method = lm) +
+ggplot(outputspomin2017) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = outputspomin2017[!is.na(outputspomin2017$data),],aes(x=time, y=data)) +
   xlab("Time (hour)") + ylab("Output SPO (%)") +
   ggtitle("2017 Output SPO")
 
@@ -1388,15 +1399,17 @@ ggplot(throughputmin2017, aes(x=time, y=data, color = type)) + geom_line(alpha =
 
 spomin2017 <- multiple30min2017 %>%
   filter( type == 'feedspo')
-ggplot(spomin2017, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Solid Phase Oxalate (%)") +
+ggplot(spomin2017) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = spomin2017[!is.na(spomin2017$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Solid Phase Oxalate (%)") +
   ggtitle("2017 Feed Solid Phase Oxalate")
 
 
 feedsodamin2017 <- multiple30min2017 %>%
   filter( type == 'feedsoda')
-ggplot(feedsodamin2017, aes(x=time, y=data, color = type)) + geom_line() +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Feed Soda Conc. (g/l)") +
+ggplot(feedsodamin2017) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = feedsodamin2017[!is.na(feedsodamin2017$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Feed Soda Conc. (g/l)") +
   ggtitle("2017 Feed Soda Conc.")
 
 
@@ -1457,12 +1470,12 @@ for(i in length(sodafilt30min2017A1):1){
 
 data30min2017A1 <- data.frame(time = timestep30min2017,           #day
                               status = status30min2017A1,
-                              outputspo = modoutputspo30min2017,     #%
+                              outputspo = outputspo30min2017,     #%
                               outputsoda = outputsoda30min2017,   #g/l
                               outputalumina = outputalumina30min2017, #kl/h
                               throughput = throughput30min2017,   #t/h
-                              feedspo = modspo30min2017,      #%
-                              feedsoda = modfeedsoda30min2017,    #g/l
+                              feedspo = spo30min2017,      #%
+                              feedsoda = feedsoda30min2017,    #g/l
                               feeddensity = feeddensity30min2017, #SG
                               drumspeed = drumspeed30min2017A1,   #RPM
                               bathlevel = bathlevel30min2017A1,   #%
@@ -1471,8 +1484,8 @@ data30min2017A1 <- data.frame(time = timestep30min2017,           #day
                               flocflow = flocflow30min2017A1,     #kl/h
                               cakewash = cakewash30min2017A1,     #kl/h
                               clothwash = clothwash30min2017A1,   #kl/h
-                              sodafiltrate = modsodafiltrate30min2017A1, #g/l
-                              oxfiltrate = modoxfiltrate30min2017A1,     #g/l
+                              sodafiltrate = sodafilt30min2017A1, #g/l
+                              oxfiltrate = oxfilt30min2017A1,     #g/l
                               sodaconc = sodaconc30min2017A1)     #t/h
 
 
@@ -1536,15 +1549,17 @@ ggplot(clothwashmin2017A1, aes(x=time, y=data, color = type)) + geom_line(alpha 
 
 sodafiltratemin2017A1 <- multiple30min2017A1 %>%
   filter( type == 'sodafiltrate')
-ggplot(sodafiltratemin2017A1, aes(x=time, y=data, color = type)) + geom_line() +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
+ggplot(sodafiltratemin2017A1) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data=sodafiltratemin2017A1[!is.na(sodafiltratemin2017A1$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
   ggtitle("2017 Filter 1A Filtrate Soda Conc.")
 
 
 oxfiltratemin2017A1 <- multiple30min2017A1 %>%
   filter( type == 'oxfiltrate')
-ggplot(oxfiltratemin2017A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
+ggplot(oxfiltratemin2017A1) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = oxfiltratemin2017A1[!is.na(oxfiltratemin2017A1$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
   ggtitle("2017 Filter 1A Filtrate Oxalate")
 
 
@@ -1599,12 +1614,12 @@ for(i in length(sodafilt30min2017B1):1){
 
 data30min2017B1 <- data.frame(time = timestep30min2017,           #day
                               status = status30min2017B1,
-                              outputspo = modoutputspo30min2017,  #%
+                              outputspo = outputspo30min2017,  #%
                               outputsoda = outputsoda30min2017,   #g/l
                               outputalumina = outputalumina30min2017, #kl/h
                               throughput = throughput30min2017,   #t/h
-                              feedspo = modspo30min2017,      #%
-                              feedsoda = modfeedsoda30min2017,    #g/l
+                              feedspo = spo30min2017,      #%
+                              feedsoda = feedsoda30min2017,    #g/l
                               feeddensity = feeddensity30min2017, #SG
                               drumspeed = drumspeed30min2017B1,   #RPM
                               bathlevel = bathlevel30min2017B1,   #%
@@ -1613,8 +1628,8 @@ data30min2017B1 <- data.frame(time = timestep30min2017,           #day
                               flocflow = flocflow30min2017B1,     #kl/h
                               cakewash = cakewash30min2017B1,     #kl/h
                               clothwash = clothwash30min2017B1,   #kl/h
-                              sodafiltrate = modsodafiltrate30min2017B1, #g/l
-                              oxfiltrate = modoxfiltrate30min2017B1)     #g/l
+                              sodafiltrate = sodafilt30min2017B1, #g/l
+                              oxfiltrate = oxfilt30min2017B1)     #g/l
 
 
 multiple30min2017B1 <- data30min2017B1 %>%
@@ -1684,8 +1699,9 @@ ggplot(sodafiltratemin2017B1, aes(x=time, y=data, color = type)) + geom_line() +
 
 oxfiltratemin2017B1 <- multiple30min2017B1 %>%
   filter( type == 'oxfiltrate')
-ggplot(oxfiltratemin2017B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
+ggplot(oxfiltratemin2017B1) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = oxfiltratemin2017B1[!is.na(oxfiltratemin2017B1$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
   ggtitle("2017 Filter 1B Filtrate Oxalate")
 
 
@@ -1745,19 +1761,22 @@ for(i in length(spo30min2018):1){
 }
 
 data30min2018 <- data.frame(time = timestep30min2018,           #day
-                            outputspo = modoutputspo30min2018,  #%
+                            outputspo = outputspo30min2018,  #%
                             outputsoda = outputsoda30min2018,   #g/l
                             outputalumina = outputalumina30min2018,#kl/h
                             throughput = throughput30min2018,   #t/h
-                            feedspo = modspo30min2018,          #%
-                            feedsoda = modfeedsoda30min2018,    #g/l
+                            feedspo = spo30min2018,          #%
+                            feedsoda = feedsoda30min2018,    #g/l
                             feeddensity = feeddensity30min2018) #SG
 
 
 multiple30min2018 <- data30min2018 %>%
   gather(type, data, outputspo:feeddensity)
 
-ggplot(multiple30min2018, aes(x=time, y=data, color = type)) + 
+ggplot(multiple30min2018, aes(x=time, y=data, color = type)) +
+  geom_line(data = outputspomin2018[!is.na(outputspomin2018$data),],aes(x=time, y=data)) +
+  geom_line(data = spomin2018[!is.na(spomin2018$data),],aes(x=time, y=data)) +
+  geom_line(data = feedsodamin2018[!is.na(feedsodamin2018$data),],aes(x=time, y=data)) +
   geom_line(na.rm = TRUE) + 
   xlab("Time (hour)") + ggtitle("2018 Feed Data Comparison")
 # ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
@@ -1765,8 +1784,8 @@ ggplot(multiple30min2018, aes(x=time, y=data, color = type)) +
 #observed against Output Soda Conc.
 outputspomin2018 <- multiple30min2018 %>%
   filter(type == 'outputspo')
-ggplot(outputspomin2018, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-  geom_smooth(method = lm) +
+ggplot(outputspomin2018) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = outputspomin2018[!is.na(outputspomin2018$data),],aes(x=time, y=data)) +
   xlab("Time (hour)") + ylab("Output SPO (%)") +
   ggtitle("2018 Output SPO")
 
@@ -1779,29 +1798,31 @@ ggplot(outputsodamin2018, aes(x=time, y=data, color = type)) + geom_line(alpha =
 
 outputaluminamin2018 <- multiple30min2018 %>%
   filter(type == 'outputalumina')
-ggplot(outputaluminamin2018, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+ggplot(outputsodamin2018, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
   geom_smooth(method = lm) +
-  xlab("Time (hour)") + ylab("Output ALumina (kl/h)") +
+  xlab("Time (hour)") + ylab("Output Alumina (kl/h)") +
   ggtitle("2018 Output Alumina")
 
 throughputmin2018 <- multiple30min2018 %>%
   filter( type == 'throughput')
 ggplot(throughputmin2018, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
   geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Throughput (t/h)") +
-  ggtitle("Feed Throughput")
+  ggtitle("2018 Feed Throughput")
 
 
 spomin2018 <- multiple30min2018 %>%
   filter( type == 'feedspo')
-ggplot(spomin2018, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Solid Phase Oxalate (%)") +
+ggplot(spomin2018) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = spomin2018[!is.na(spomin2018$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Solid Phase Oxalate (%)") +
   ggtitle("2018 Feed Solid Phase Oxalate")
 
 
 feedsodamin2018 <- multiple30min2018 %>%
   filter( type == 'feedsoda')
-ggplot(feedsodamin2018, aes(x=time, y=data, color = type)) + geom_line() +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Feed Soda Conc. (g/l)") +
+ggplot(feedsodamin2018) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = feedsodamin2018[!is.na(feedsodamin2018$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Feed Soda Conc. (g/l)") +
   ggtitle("2018 Feed Soda Conc.")
 
 
@@ -1862,12 +1883,12 @@ for(i in length(sodafilt30min2018A1):1){
 
 data30min2018A1 <- data.frame(time = timestep30min2018,           #day
                               status = status30min2018A1,
-                              outputspo = modoutputspo30min2018,         #%
-                              outputsoda = outputsoda30min2018,       #g/l
-                              outputalumina = outputalumina30min2018,#kl/h
-                              throughput = throughput30min2017,   #t/h
-                              feedspo = modspo30min2018,          #%
-                              feedsoda = modfeedsoda30min2018,    #g/l
+                              outputspo = outputspo30min2018,     #%
+                              outputsoda = outputsoda30min2018,   #g/l
+                              outputalumina = outputalumina30min2018, #kl/h
+                              throughput = throughput30min2018,   #t/h
+                              feedspo = spo30min2018,      #%
+                              feedsoda = feedsoda30min2018,    #g/l
                               feeddensity = feeddensity30min2018, #SG
                               drumspeed = drumspeed30min2018A1,   #RPM
                               bathlevel = bathlevel30min2018A1,   #%
@@ -1876,8 +1897,8 @@ data30min2018A1 <- data.frame(time = timestep30min2018,           #day
                               flocflow = flocflow30min2018A1,     #kl/h
                               cakewash = cakewash30min2018A1,     #kl/h
                               clothwash = clothwash30min2018A1,   #kl/h
-                              sodafiltrate = modsodafiltrate30min2018A1, #g/l
-                              oxfiltrate = modoxfiltrate30min2018A1,     #g/l
+                              sodafiltrate = sodafilt30min2018A1, #g/l
+                              oxfiltrate = oxfilt30min2018A1,     #g/l
                               sodaconc = sodaconc30min2018A1)     #t/h
 
 
@@ -1886,7 +1907,7 @@ multiple30min2018A1 <- data30min2018A1 %>%
   gather(type, data, outputspo:sodaconc)
 
 ggplot(multiple30min2018A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-  xlab("Time (hour)") + ggtitle("2018 Filter 1A Data Comparison")
+  xlab("Time (hour)") + ggtitle("Filter 1A Data Comparison")
 # ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
 
 #observed against Output Soda Conc.
@@ -1941,15 +1962,17 @@ ggplot(clothwashmin2018A1, aes(x=time, y=data, color = type)) + geom_line(alpha 
 
 sodafiltratemin2018A1 <- multiple30min2018A1 %>%
   filter( type == 'sodafiltrate')
-ggplot(sodafiltratemin2018A1, aes(x=time, y=data, color = type)) + geom_line() +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
+ggplot(sodafiltratemin2018A1) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data=sodafiltratemin2018A1[!is.na(sodafiltratemin2018A1$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
   ggtitle("2018 Filter 1A Filtrate Soda Conc.")
 
 
 oxfiltratemin2018A1 <- multiple30min2018A1 %>%
   filter( type == 'oxfiltrate')
-ggplot(oxfiltratemin2018A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
+ggplot(oxfiltratemin2018A1) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = oxfiltratemin2018A1[!is.na(oxfiltratemin2018A1$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
   ggtitle("2018 Filter 1A Filtrate Oxalate")
 
 
@@ -2004,12 +2027,12 @@ for(i in length(sodafilt30min2018B1):1){
 
 data30min2018B1 <- data.frame(time = timestep30min2018,           #day
                               status = status30min2018B1,
-                              outputspo = modoutputspo30min2018,     #%
+                              outputspo = outputspo30min2018,  #%
                               outputsoda = outputsoda30min2018,   #g/l
-                              outputalumina = outputalumina30min2018,#kl/h
+                              outputalumina = outputalumina30min2018, #kl/h
                               throughput = throughput30min2018,   #t/h
-                              feedspo = modspo30min2018,          #%
-                              feedsoda = modfeedsoda30min2018,    #g/l
+                              feedspo = spo30min2018,      #%
+                              feedsoda = feedsoda30min2018,    #g/l
                               feeddensity = feeddensity30min2018, #SG
                               drumspeed = drumspeed30min2018B1,   #RPM
                               bathlevel = bathlevel30min2018B1,   #%
@@ -2018,8 +2041,8 @@ data30min2018B1 <- data.frame(time = timestep30min2018,           #day
                               flocflow = flocflow30min2018B1,     #kl/h
                               cakewash = cakewash30min2018B1,     #kl/h
                               clothwash = clothwash30min2018B1,   #kl/h
-                              sodafiltrate = modsodafiltrate30min2018B1, #g/l
-                              oxfiltrate = modoxfiltrate30min2018B1)     #g/l
+                              sodafiltrate = sodafilt30min2018B1, #g/l
+                              oxfiltrate = oxfilt30min2018B1)     #g/l
 
 
 multiple30min2018B1 <- data30min2018B1 %>%
@@ -2089,10 +2112,10 @@ ggplot(sodafiltratemin2018B1, aes(x=time, y=data, color = type)) + geom_line() +
 
 oxfiltratemin2018B1 <- multiple30min2018B1 %>%
   filter( type == 'oxfiltrate')
-ggplot(oxfiltratemin2018B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
+ggplot(oxfiltratemin2018B1) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = oxfiltratemin2018B1[!is.na(oxfiltratemin2018B1$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
   ggtitle("2018 Filter 1B Filtrate Oxalate")
-
 
 
 #---------------------------------------------------------------------------------------------
@@ -2152,29 +2175,31 @@ for(i in length(spo30min2019):1){
 }
 
 data30min2019 <- data.frame(time = timestep30min2019,           #day
-                            outputspo = modoutputspo30min2019,  #%
+                            outputspo = outputspo30min2019,  #%
                             outputsoda = outputsoda30min2019,   #g/l
                             outputalumina = outputalumina30min2019, #kl/h
                             throughput = throughput30min2019,   #t/h
-                            feedspo = modspo30min2019,          #%
-                            feedsoda = modfeedsoda30min2019,    #g/l
+                            feedspo = spo30min2019,          #%
+                            feedsoda = feedsoda30min2019,    #g/l
                             feeddensity = feeddensity30min2019) #SG
 
 
 multiple30min2019 <- data30min2019 %>%
   gather(type, data, outputspo:feeddensity)
 
-ggplot(multiple30min2019, aes(x=time, y=data, color = type)) + 
-  geom_line(na.rm = TRUE) +
+ggplot(multiple30min2019, aes(x=time, y=data, color = type)) +
+  geom_line(data = outputspomin2019[!is.na(outputspomin2019$data),],aes(x=time, y=data)) +
+  geom_line(data = spomin2019[!is.na(spomin2019$data),],aes(x=time, y=data)) +
+  geom_line(data = feedsodamin2019[!is.na(feedsodamin2019$data),],aes(x=time, y=data)) +
+  geom_line(na.rm = TRUE) + 
   xlab("Time (hour)") + ggtitle("2019 Feed Data Comparison")
 # ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
 
 #observed against Output Soda Conc.
 outputspomin2019 <- multiple30min2019 %>%
   filter(type == 'outputspo')
-ggplot(outputspomin2019, aes(x=time, y=data, color = type)) + 
-  geom_line(alpha = 0.8, na.rm = TRUE) +
-  geom_smooth(method = lm) +
+ggplot(outputspomin2019) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = outputspomin2019[!is.na(outputspomin2019$data),],aes(x=time, y=data)) +
   xlab("Time (hour)") + ylab("Output SPO (%)") +
   ggtitle("2019 Output SPO")
 
@@ -2187,7 +2212,7 @@ ggplot(outputsodamin2019, aes(x=time, y=data, color = type)) + geom_line(alpha =
 
 outputaluminamin2019 <- multiple30min2019 %>%
   filter(type == 'outputalumina')
-ggplot(outputaluminamin2019, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+ggplot(outputsodamin2019, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
   geom_smooth(method = lm) +
   xlab("Time (hour)") + ylab("Output Alumina (kl/h)") +
   ggtitle("2019 Output Alumina")
@@ -2201,15 +2226,17 @@ ggplot(throughputmin2019, aes(x=time, y=data, color = type)) + geom_line(alpha =
 
 spomin2019 <- multiple30min2019 %>%
   filter( type == 'feedspo')
-ggplot(spomin2019, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Solid Phase Oxalate (%)") +
+ggplot(spomin2019) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = spomin2019[!is.na(spomin2019$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Solid Phase Oxalate (%)") +
   ggtitle("2019 Feed Solid Phase Oxalate")
 
 
 feedsodamin2019 <- multiple30min2019 %>%
   filter( type == 'feedsoda')
-ggplot(feedsodamin2019, aes(x=time, y=data, color = type)) + geom_line() +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Feed Soda Conc. (g/l)") +
+ggplot(feedsodamin2019) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = feedsodamin2019[!is.na(feedsodamin2019$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Feed Soda Conc. (g/l)") +
   ggtitle("2019 Feed Soda Conc.")
 
 
@@ -2270,12 +2297,12 @@ for(i in length(sodafilt30min2019A1):1){
 
 data30min2019A1 <- data.frame(time = timestep30min2019,           #day
                               status = status30min2019A1,
-                              outputspo = modoutputspo30min2019,     #%
+                              outputspo = outputspo30min2019,     #%
                               outputsoda = outputsoda30min2019,   #g/l
                               outputalumina = outputalumina30min2019, #kl/h
                               throughput = throughput30min2019,   #t/h
-                              feedspo = modspo30min2019,      #%
-                              feedsoda = modfeedsoda30min2019,    #g/l
+                              feedspo = spo30min2019,      #%
+                              feedsoda = feedsoda30min2019,    #g/l
                               feeddensity = feeddensity30min2019, #SG
                               drumspeed = drumspeed30min2019A1,   #RPM
                               bathlevel = bathlevel30min2019A1,   #%
@@ -2284,8 +2311,8 @@ data30min2019A1 <- data.frame(time = timestep30min2019,           #day
                               flocflow = flocflow30min2019A1,     #kl/h
                               cakewash = cakewash30min2019A1,     #kl/h
                               clothwash = clothwash30min2019A1,   #kl/h
-                              sodafiltrate = modsodafiltrate30min2019A1, #g/l
-                              oxfiltrate = modoxfiltrate30min2019A1,     #g/l
+                              sodafiltrate = sodafilt30min2019A1, #g/l
+                              oxfiltrate = oxfilt30min2019A1,     #g/l
                               sodaconc = sodaconc30min2019A1)     #t/h
 
 
@@ -2349,15 +2376,17 @@ ggplot(clothwashmin2019A1, aes(x=time, y=data, color = type)) + geom_line(alpha 
 
 sodafiltratemin2019A1 <- multiple30min2019A1 %>%
   filter( type == 'sodafiltrate')
-ggplot(sodafiltratemin2019A1, aes(x=time, y=data, color = type)) + geom_line() +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
+ggplot(sodafiltratemin2019A1) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data=sodafiltratemin2019A1[!is.na(sodafiltratemin2019A1$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
   ggtitle("2019 Filter 1A Filtrate Soda Conc.")
 
 
 oxfiltratemin2019A1 <- multiple30min2019A1 %>%
   filter( type == 'oxfiltrate')
-ggplot(oxfiltratemin2019A1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
+ggplot(oxfiltratemin2019A1) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = oxfiltratemin2019A1[!is.na(oxfiltratemin2019A1$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
   ggtitle("2019 Filter 1A Filtrate Oxalate")
 
 
@@ -2412,12 +2441,12 @@ for(i in length(sodafilt30min2019B1):1){
 
 data30min2019B1 <- data.frame(time = timestep30min2019,           #day
                               status = status30min2019B1,
-                              outputspo = modoutputspo30min2019,  #%
+                              outputspo = outputspo30min2019,  #%
                               outputsoda = outputsoda30min2019,   #g/l
                               outputalumina = outputalumina30min2019, #kl/h
                               throughput = throughput30min2019,   #t/h
-                              feedspo = modspo30min2019,      #%
-                              feedsoda = modfeedsoda30min2019,    #g/l
+                              feedspo = spo30min2019,      #%
+                              feedsoda = feedsoda30min2019,    #g/l
                               feeddensity = feeddensity30min2019, #SG
                               drumspeed = drumspeed30min2019B1,   #RPM
                               bathlevel = bathlevel30min2019B1,   #%
@@ -2426,8 +2455,8 @@ data30min2019B1 <- data.frame(time = timestep30min2019,           #day
                               flocflow = flocflow30min2019B1,     #kl/h
                               cakewash = cakewash30min2019B1,     #kl/h
                               clothwash = clothwash30min2019B1,   #kl/h
-                              sodafiltrate = modsodafiltrate30min2019B1, #g/l
-                              oxfiltrate = modoxfiltrate30min2019B1)     #g/l
+                              sodafiltrate = sodafilt30min2019B1, #g/l
+                              oxfiltrate = oxfilt30min2019B1)     #g/l
 
 
 multiple30min2019B1 <- data30min2019B1 %>%
@@ -2439,32 +2468,97 @@ ggplot(multiple30min2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha
 # ggplot(multipledaily, aes(x=time, y=data)) + geom_line() + facet_wrap(~type)
 
 #observed against Output Soda Conc.
+#drum speed
 drumspeedmin2019B1 <- multiple30min2019B1 %>%
   filter(type == 'drumspeed')
 ggplot(drumspeedmin2019B1, aes(x=time, y=data)) + geom_line() +
   geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Drum Speed (RPM)") +
   ggtitle("2019 Filter 1B Drum Speed")
 
+#rosner test
+rtestdrumspeedmin2019B1 <- rosnerTest(drumspeedmin2019B1$data, k=100)
 
+if (rtestdrumspeedmin2019B1$n.outliers > 0){
+  finalrtestdrumspeedmin2019B1 <- rosnerTest(drumspeedmin2019B1$data, k=rtestdrumspeedmin2019B1$n.outliers)
+  
+  filterdrumspeedmin2019B1 <- drumspeedmin2019B1[-c(finalrtestdrumspeedmin2019B1$all.stats$Obs.Num),]
+  ggplot(filterdrumspeedmin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+    geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Drum Speed (RPM)") +
+    ggtitle("2019 Filter 1B Drum Speed (filtered)")
+}
+
+#bath level
 bathlevelmin2019B1 <- multiple30min2019B1 %>%
   filter( type == 'bathlevel')
 ggplot(bathlevelmin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) + 
   geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Bath Level (%)") +
   ggtitle("2019 Filter 1B Bath Level")
 
+#rosner test
+rtestbathlevelmin2019B1 <- rosnerTest(bathlevelmin2019B1$data, k=100)
 
+if (rtestbathlevelmin2019B1$n.outliers > 0){
+  finalrtestbathlevelmin2019B1 <- rosnerTest(bathlevelmin2019B1$data, k=rtestbathlevelmin2019B1$n.outliers)
+  
+  filterbathlevelmin2019B1 <- bathlevelmin2019B1[-c(finalrtestbathlevelmin2019B1$all.stats$Obs.Num),]
+  ggplot(filterbathlevelmin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+    geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Bath Level (%)") +
+    ggtitle("2019 Filter 1B Bath Level (filtered)")
+}
+
+#vacuum pressure
 vacuummin2019B1 <- multiple30min2019B1 %>%
   filter( type == 'vacuum')
 ggplot(vacuummin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
   geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Vacuum Pressure (kPa)") +
   ggtitle("2019 Filter 1B Vacuum Pressure")
 
+#rosner test
+rtestvacuummin2019B1 <- rosnerTest(vacuummin2019B1$data, k=100)
 
+if (rtestvacuummin2019B1$n.outliers > 0){
+  finalrtestvacuummin2019B1 <- rosnerTest(vacuummin2019B1$data, k=rtestvacuummin2019B1$n.outliers)
+  
+  filtervacuummin2019B1 <- vacuummin2019B1[-c(finalrtestvacuummin2019B1$all.stats$Obs.Num),]
+  ggplot(filtervacuummin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+    geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Vacuum Pressure (kPa)") +
+    ggtitle("2019 Filter 1B Vacuum Pressure (filtered)")
+}
+
+
+#feed flow
 feedflowmin2019B1 <- multiple30min2019B1 %>%
   filter( type == 'feedflow')
 ggplot(feedflowmin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
   geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Feed Flow (kl/h)") +
   ggtitle("2019 Filter 1B Feed Flow")
+
+#rosner test
+rtestfeedflowmin2019B1 <- rosnerTest(feedflowmin2019B1$data, k=100)
+
+if (rtestfeedflowmin2019B1$n.outliers > 0){
+  finalrtestfeedflowmin2019B1 <- rosnerTest(feedflowmin2019B1$data, k=rtestfeedflowmin2019B1$n.outliers)
+  
+  filterfeedflowmin2019B1 <- feedflowmin2019B1[-c(finalrtestfeedflowmin2019B1$all.stats$Obs.Num),]
+  beforefeedflowmin2019B1 <- feedflowmin2019B1 %>%
+    mutate(outlier = "Before")
+  afterfeedflowmin2019B1 <- filterfeedflowmin2019B1 %>%
+    mutate(outlier = "After")
+  finalfilterfeedflowmin2019B1 <- rbind(beforefeedflowmin2019B1, afterfeedflowmin2019B1)
+  
+  ggplot(finalfilterfeedflowmin2019B1, aes(x=time, y=data, color = outlier)) + 
+    geom_point(aes(color = outlier)) + geom_line() +
+    scale_colour_manual(values=c("red", "blue")) + 
+    xlab("Time (hour)") + ylab("Feed Flow (kl/h)") +
+    ggtitle("2019 Filter 1B Feed Flow")
+  
+  ggplot(filterfeedflowmin2019B1, aes(x=time, y=data, color = type)) + 
+    geom_line() + geom_point(aes(color = type)) +
+    scale_colour_manual(values=c("blue")) + 
+    xlab("Time (hour)") + ylab("Feed Flow (kl/h)") + ylim(0,180) +
+    ggtitle("2019 Filter 1B Feed Flow (filtered)")
+}
+
 
 
 flocflowmin2019B1 <- multiple30min2019B1 %>%
@@ -2480,6 +2574,17 @@ ggplot(cakewashmin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha =
   geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Cake Wash Flow (kl/h)") +
   ggtitle("2019 Filter 1B Cake Wash Flow")
 
+#rosner test
+rtestcakewashmin2019B1 <- rosnerTest(cakewashmin2019B1$data, k=100)
+
+if (rtestcakewashmin2019B1$n.outliers > 0){
+  finalrtestcakewashmin2019B1 <- rosnerTest(cakewashmin2019B1$data, k=rtestcakewashmin2019B1$n.outliers)
+  
+  filtercakewashmin2019B1 <- cakewashmin2019B1[-c(finalrtestcakewashmin2019B1$all.stats$Obs.Num),]
+  ggplot(filtercakewashmin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+    geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Cake Wash Flow (kl/h)") +
+    ggtitle("2019 Filter 1B Cake Wash Flow (filtered)")
+}
 
 clothwashmin2019B1 <- multiple30min2019B1 %>%
   filter( type == 'clothwash')
@@ -2494,16 +2599,33 @@ ggplot(sodafiltratemin2019B1, aes(x=time, y=data, color = type)) + geom_line() +
   geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
   ggtitle("2019 Filter 1B Filtrate Soda Conc.")
 
+#rosner test
+rtestsodafiltratemin2019B1 <- rosnerTest(sodafiltratemin2019B1$data, k=100)
+
+if (rtestsodafiltratemin2019B1$n.outliers > 0){
+  finalrtestsodafiltratemin2019B1 <- rosnerTest(sodafiltratemin2019B1$data, k=rtestsodafiltratemin2019B1$n.outliers)
+  
+  filtersodafiltratemin2019B1 <- sodafiltratemin2019B1[-c(finalrtestsodafiltratemin2019B1$all.stats$Obs.Num),]
+  ggplot(filtersodafiltratemin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
+    geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
+    ggtitle("2019 Filter 1B Filtrate Soda Conc. (filtered)")
+}
+
+fouriersodafiltratemin2019B1 <- abs(fft(filtersodafiltratemin2019B1$data))
+freqfourier <- 1/(onfilterrevDataset1$time/24)
+fourier <- cbind(fourier, freq=freqfourier, onfilterrevDataset1)
+fourier <- fourier[2:1175,]
+fourier <- fourier[1:(length(fourier$fourier)/2),]
+ggplot(fourier, aes(x=freq, y=fourier)) + geom_col() + 
+  xlab("Frequency (1/day)") + ylab("Magnitude") + 
+  ggtitle("Dataset 1: Fourier Transformation of 2B Drum Bath Level")
 
 oxfiltratemin2019B1 <- multiple30min2019B1 %>%
   filter( type == 'oxfiltrate')
-ggplot(oxfiltratemin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-  geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
+ggplot(oxfiltratemin2019B1) + geom_point(aes(x=time, y=data, color = type)) +
+  geom_line(data = oxfiltratemin2019B1[!is.na(oxfiltratemin2019B1$data),],aes(x=time, y=data)) +
+  xlab("Time (hour)") + ylab("Filtrate Oxalate (%)") +
   ggtitle("2019 Filter 1B Filtrate Oxalate")
-
-
-
-
 
 
 
@@ -2693,7 +2815,7 @@ for (i in 1:length(onfilterrevDataset1$level)) {
   }
 }
 #ggplot(hourinterval, aes(x=time, y=level)) + geom_line()     
-     
+
 twohourinterval <- onfilterrevDataset1[1,]
 for (i in 1:length(onfilterrevDataset1$level)) {
   if (i %% 4 == 0){
@@ -2832,8 +2954,8 @@ for (i in 1:length(onfilterrevDataset2$level)) {
 
 
 timeinterval2 <- rbind(hourintervaladj2, twohourintervaladj2, fourhourintervaladj2, 
-                      sixhourintervaladj2, eighthourintervaladj2, twelvehourintervaladj2, 
-                      twentyfourhourintervaladj2)
+                       sixhourintervaladj2, eighthourintervaladj2, twelvehourintervaladj2, 
+                       twentyfourhourintervaladj2)
 
 
 ggplot(timeinterval2, aes(x=time, y=level, color = interval)) + geom_line() +
@@ -2886,7 +3008,7 @@ highbf1 <- butter(3, 0.1, type = "high")
 z1 <- filtfilt(highbf1, onfilterrevDataset1$level)
 
 highpass1 <- data.frame(time = onfilterrevDataset1$time, filter = z1, 
-                       nofilter = onfilterrevDataset1$level)
+                        nofilter = onfilterrevDataset1$level)
 highpass1fin <- highpass1 %>%
   gather(type, level, filter:nofilter)
 
