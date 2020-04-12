@@ -3032,3 +3032,4 @@ ggplot(highpass2fin, aes(x=time, y=level, color = type, alpha = type)) + geom_li
   scale_colour_manual(values=c("red", "blue")) + 
   xlab("Time (hour)") + ylab("Bath Level (%)") + 
   ggtitle("High Pass Filter Dataset 2 of 2B Drum Bath Level")
+
