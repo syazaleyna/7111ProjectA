@@ -2121,6 +2121,7 @@ ggplot(oxfiltratemin2018B1) + geom_point(aes(x=time, y=data, color = type)) +
 #---------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------
 #extract feed data from 30mins observation (2019)
+date30min2019 <- seedwash30min2019$Date
 outputspo30min2019 <- seedwash30min2019$PONthTkAN.Ox
 outputsoda30min2019 <- seedwash30min2019$POSOFATPV.S
 outputalumina30min2019 <- seedwash30min2019$TotalFlow
@@ -2175,6 +2176,7 @@ for(i in length(spo30min2019):1){
 }
 
 data30min2019 <- data.frame(time = timestep30min2019,           #day
+                            date = date30min2019,
                             outputspo = outputspo30min2019,  #%
                             outputsoda = outputsoda30min2019,   #g/l
                             outputalumina = outputalumina30min2019, #kl/h
@@ -2440,6 +2442,7 @@ for(i in length(sodafilt30min2019B1):1){
 }
 
 data30min2019B1 <- data.frame(time = timestep30min2019,           #day
+                              date = date30min2019,
                               status = status30min2019B1,
                               outputspo = outputspo30min2019,  #%
                               outputsoda = outputsoda30min2019,   #g/l
@@ -2558,6 +2561,35 @@ if (rtestfeedflowmin2019B1$n.outliers > 0){
     xlab("Time (hour)") + ylab("Feed Flow (kl/h)") + ylim(0,180) +
     ggtitle("2019 Filter 1B Feed Flow (filtered)")
 }
+
+#fourier analysis
+filterfeedflowmin2019B1 <- na.omit(filterfeedflowmin2019B1)
+ffeedflowmin2019B1 <- abs(fft(filterfeedflowmin2019B1$data))
+freqffeedflowmin2019B1 <- 1/(filterfeedflowmin2019B1$time/24)
+fourierfeedflowmin2019B1 <- cbind(fourier=ffeedflowmin2019B1, 
+                                  freq=freqffeedflowmin2019B1,
+                                  filterfeedflowmin2019B1)
+finalfourierfeedflowmin2019B1 <- fourierfeedflowmin2019B1[3:(length(fourierfeedflowmin2019B1$fourier)/12),]
+ggplot(finalfourierfeedflowmin2019B1, aes(x=time, y=fourier)) + geom_col() +
+  xlab("Frequency (1/day)") + ylab("Magnitude") + 
+  ggtitle("Fourier Transformation of 1B Feed Flow")
+
+#low filter 
+lowbf <- butter(8, 0.3, type = "low")
+y1 <- filtfilt(lowbf, fourierfeedflowmin2019B1$data)
+
+lowpassfeedflowmin2019B1 <- data.frame(time = fourierfeedflowmin2019B1$freq, 
+                                      filter = y1, 
+                                      nofilter = fourierfeedflowmin2019B1$data)
+lowpassfeedflowmin2019B1fin <- lowpassfeedflowmin2019B1 %>%
+  gather(type, level, filter:nofilter)
+
+ggplot(lowpassfeedflowmin2019B1fin, aes(x=time, y=level, color = type, alpha = type)) + 
+  geom_line() + 
+  scale_alpha_manual(values=c(1,0.5)) + 
+  scale_colour_manual(values=c("red", "blue")) + 
+  xlab("Time (hour)") + ylab("Feed Flow (kl/h)") + 
+  ggtitle("Low Pass Filter 2019 30 min Feed Flow")
 
 
 
