@@ -1715,6 +1715,7 @@ throughput30min2018 <- seedwash30min2018$POFeedMQPV
 spo30min2018 <- seedwash30min2018$POFeedAN.Ox
 feedsoda30min2018 <- seedwash30min2018$POFeedAN.C
 feeddensity30min2018 <- seedwash30min2018$POFeedDTPV
+date30min2018 <- seedwash30min2018$Date
 
 timestep30min2018 <- seq(616, 0, by = -0.5)
 
@@ -1761,6 +1762,7 @@ for(i in length(spo30min2018):1){
 }
 
 data30min2018 <- data.frame(time = timestep30min2018,           #day
+                            date = date30min2018,
                             outputspo = outputspo30min2018,  #%
                             outputsoda = outputsoda30min2018,   #g/l
                             outputalumina = outputalumina30min2018,#kl/h
@@ -2026,6 +2028,7 @@ for(i in length(sodafilt30min2018B1):1){
 }
 
 data30min2018B1 <- data.frame(time = timestep30min2018,           #day
+                              date = date30min2018,
                               status = status30min2018B1,
                               outputspo = outputspo30min2018,  #%
                               outputsoda = outputsoda30min2018,   #g/l
@@ -2045,7 +2048,7 @@ data30min2018B1 <- data.frame(time = timestep30min2018,           #day
                               oxfiltrate = oxfilt30min2018B1)     #g/l
 
 
-multiple30min2018B1 <- data30min2018B1 %>%
+multiple30min2018B1 <- data30min2018B1 %>% 
   filter(status == 'On') %>%
   gather(type, data, outputspo:oxfiltrate)
 
@@ -2478,17 +2481,6 @@ ggplot(drumspeedmin2019B1, aes(x=time, y=data)) + geom_line() +
   geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Drum Speed (RPM)") +
   ggtitle("2019 Filter 1B Drum Speed")
 
-#rosner test
-rtestdrumspeedmin2019B1 <- rosnerTest(drumspeedmin2019B1$data, k=100)
-
-if (rtestdrumspeedmin2019B1$n.outliers > 0){
-  finalrtestdrumspeedmin2019B1 <- rosnerTest(drumspeedmin2019B1$data, k=rtestdrumspeedmin2019B1$n.outliers)
-  
-  filterdrumspeedmin2019B1 <- drumspeedmin2019B1[-c(finalrtestdrumspeedmin2019B1$all.stats$Obs.Num),]
-  ggplot(filterdrumspeedmin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-    geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Drum Speed (RPM)") +
-    ggtitle("2019 Filter 1B Drum Speed (filtered)")
-}
 
 #bath level
 bathlevelmin2019B1 <- multiple30min2019B1 %>%
@@ -2497,17 +2489,6 @@ ggplot(bathlevelmin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha 
   geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Bath Level (%)") +
   ggtitle("2019 Filter 1B Bath Level")
 
-#rosner test
-rtestbathlevelmin2019B1 <- rosnerTest(bathlevelmin2019B1$data, k=100)
-
-if (rtestbathlevelmin2019B1$n.outliers > 0){
-  finalrtestbathlevelmin2019B1 <- rosnerTest(bathlevelmin2019B1$data, k=rtestbathlevelmin2019B1$n.outliers)
-  
-  filterbathlevelmin2019B1 <- bathlevelmin2019B1[-c(finalrtestbathlevelmin2019B1$all.stats$Obs.Num),]
-  ggplot(filterbathlevelmin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-    geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Bath Level (%)") +
-    ggtitle("2019 Filter 1B Bath Level (filtered)")
-}
 
 #vacuum pressure
 vacuummin2019B1 <- multiple30min2019B1 %>%
@@ -2516,18 +2497,6 @@ ggplot(vacuummin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0
   geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Vacuum Pressure (kPa)") +
   ggtitle("2019 Filter 1B Vacuum Pressure")
 
-#rosner test
-rtestvacuummin2019B1 <- rosnerTest(vacuummin2019B1$data, k=100)
-
-if (rtestvacuummin2019B1$n.outliers > 0){
-  finalrtestvacuummin2019B1 <- rosnerTest(vacuummin2019B1$data, k=rtestvacuummin2019B1$n.outliers)
-  
-  filtervacuummin2019B1 <- vacuummin2019B1[-c(finalrtestvacuummin2019B1$all.stats$Obs.Num),]
-  ggplot(filtervacuummin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-    geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Vacuum Pressure (kPa)") +
-    ggtitle("2019 Filter 1B Vacuum Pressure (filtered)")
-}
-
 
 #feed flow
 feedflowmin2019B1 <- multiple30min2019B1 %>%
@@ -2535,62 +2504,6 @@ feedflowmin2019B1 <- multiple30min2019B1 %>%
 ggplot(feedflowmin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
   geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Feed Flow (kl/h)") +
   ggtitle("2019 Filter 1B Feed Flow")
-
-#rosner test
-rtestfeedflowmin2019B1 <- rosnerTest(feedflowmin2019B1$data, k=100)
-
-if (rtestfeedflowmin2019B1$n.outliers > 0){
-  finalrtestfeedflowmin2019B1 <- rosnerTest(feedflowmin2019B1$data, k=rtestfeedflowmin2019B1$n.outliers)
-  
-  filterfeedflowmin2019B1 <- feedflowmin2019B1[-c(finalrtestfeedflowmin2019B1$all.stats$Obs.Num),]
-  beforefeedflowmin2019B1 <- feedflowmin2019B1 %>%
-    mutate(outlier = "Before")
-  afterfeedflowmin2019B1 <- filterfeedflowmin2019B1 %>%
-    mutate(outlier = "After")
-  finalfilterfeedflowmin2019B1 <- rbind(beforefeedflowmin2019B1, afterfeedflowmin2019B1)
-  
-  ggplot(finalfilterfeedflowmin2019B1, aes(x=time, y=data, color = outlier)) + 
-    geom_point(aes(color = outlier)) + geom_line() +
-    scale_colour_manual(values=c("red", "blue")) + 
-    xlab("Time (hour)") + ylab("Feed Flow (kl/h)") +
-    ggtitle("2019 Filter 1B Feed Flow")
-  
-  ggplot(filterfeedflowmin2019B1, aes(x=time, y=data, color = type)) + 
-    geom_line() + geom_point(aes(color = type)) +
-    scale_colour_manual(values=c("blue")) + 
-    xlab("Time (hour)") + ylab("Feed Flow (kl/h)") + ylim(0,180) +
-    ggtitle("2019 Filter 1B Feed Flow (filtered)")
-}
-
-#fourier analysis
-filterfeedflowmin2019B1 <- na.omit(filterfeedflowmin2019B1)
-ffeedflowmin2019B1 <- abs(fft(filterfeedflowmin2019B1$data))
-freqffeedflowmin2019B1 <- 1/(filterfeedflowmin2019B1$time/24)
-fourierfeedflowmin2019B1 <- cbind(fourier=ffeedflowmin2019B1, 
-                                  freq=freqffeedflowmin2019B1,
-                                  filterfeedflowmin2019B1)
-finalfourierfeedflowmin2019B1 <- fourierfeedflowmin2019B1[3:(length(fourierfeedflowmin2019B1$fourier)/12),]
-ggplot(finalfourierfeedflowmin2019B1, aes(x=time, y=fourier)) + geom_col() +
-  xlab("Frequency (1/day)") + ylab("Magnitude") + 
-  ggtitle("Fourier Transformation of 1B Feed Flow")
-
-#low filter 
-lowbf <- butter(8, 0.3, type = "low")
-y1 <- filtfilt(lowbf, fourierfeedflowmin2019B1$data)
-
-lowpassfeedflowmin2019B1 <- data.frame(time = fourierfeedflowmin2019B1$freq, 
-                                      filter = y1, 
-                                      nofilter = fourierfeedflowmin2019B1$data)
-lowpassfeedflowmin2019B1fin <- lowpassfeedflowmin2019B1 %>%
-  gather(type, level, filter:nofilter)
-
-ggplot(lowpassfeedflowmin2019B1fin, aes(x=time, y=level, color = type, alpha = type)) + 
-  geom_line() + 
-  scale_alpha_manual(values=c(1,0.5)) + 
-  scale_colour_manual(values=c("red", "blue")) + 
-  xlab("Time (hour)") + ylab("Feed Flow (kl/h)") + 
-  ggtitle("Low Pass Filter 2019 30 min Feed Flow")
-
 
 
 flocflowmin2019B1 <- multiple30min2019B1 %>%
@@ -2606,17 +2519,6 @@ ggplot(cakewashmin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha =
   geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Cake Wash Flow (kl/h)") +
   ggtitle("2019 Filter 1B Cake Wash Flow")
 
-#rosner test
-rtestcakewashmin2019B1 <- rosnerTest(cakewashmin2019B1$data, k=100)
-
-if (rtestcakewashmin2019B1$n.outliers > 0){
-  finalrtestcakewashmin2019B1 <- rosnerTest(cakewashmin2019B1$data, k=rtestcakewashmin2019B1$n.outliers)
-  
-  filtercakewashmin2019B1 <- cakewashmin2019B1[-c(finalrtestcakewashmin2019B1$all.stats$Obs.Num),]
-  ggplot(filtercakewashmin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-    geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Cake Wash Flow (kl/h)") +
-    ggtitle("2019 Filter 1B Cake Wash Flow (filtered)")
-}
 
 clothwashmin2019B1 <- multiple30min2019B1 %>%
   filter( type == 'clothwash')
@@ -2630,18 +2532,6 @@ sodafiltratemin2019B1 <- multiple30min2019B1 %>%
 ggplot(sodafiltratemin2019B1, aes(x=time, y=data, color = type)) + geom_line() +
   geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
   ggtitle("2019 Filter 1B Filtrate Soda Conc.")
-
-#rosner test
-rtestsodafiltratemin2019B1 <- rosnerTest(sodafiltratemin2019B1$data, k=100)
-
-if (rtestsodafiltratemin2019B1$n.outliers > 0){
-  finalrtestsodafiltratemin2019B1 <- rosnerTest(sodafiltratemin2019B1$data, k=rtestsodafiltratemin2019B1$n.outliers)
-  
-  filtersodafiltratemin2019B1 <- sodafiltratemin2019B1[-c(finalrtestsodafiltratemin2019B1$all.stats$Obs.Num),]
-  ggplot(filtersodafiltratemin2019B1, aes(x=time, y=data, color = type)) + geom_line(alpha = 0.8) +
-    geom_smooth(method = lm) + xlab("Time (hour)") + ylab("Filtrate Soda Conc. (g/l)") +
-    ggtitle("2019 Filter 1B Filtrate Soda Conc. (filtered)")
-}
 
 
 oxfiltratemin2019B1 <- multiple30min2019B1 %>%
