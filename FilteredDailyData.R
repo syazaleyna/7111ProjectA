@@ -1193,9 +1193,17 @@ filterdrumspeeddailyA2 <- na.omit(filterdrumspeeddailyA2)
 lowfilterdrumspeeddailyA2 <- filtfilt(lowbf, filterdrumspeeddailyA2$data)
 lowpassdrumspeeddailyA2 <- data.frame(time = filterdrumspeeddailyA2$time,
                                         date = filterdrumspeeddailyA2$date,
-                                        drumspeed = lowfilterdrumspeeddailyA2)
+                                        filter = lowfilterdrumspeeddailyA2,
+                                      nofilter = filterdrumspeeddailyA2$data)
 lowpassdrumspeeddailyA2fin <- lowpassdrumspeeddailyA2 %>%
-  gather(type, data, drumspeed)
+  gather(type, data, filter:nofilter)
+
+ggplot(lowpassdrumspeeddailyA2fin, aes(x=time, y=data, color = type, alpha = type)) + 
+  geom_line() + 
+  scale_alpha_manual(values=c(1,0.5)) + 
+  scale_colour_manual(values=c("red", "blue")) + 
+  xlab("Time (hour)") + ylab("Drum Speed (RPM)") + 
+  ggtitle("2A Drum Drum Speed (Daily Data)")
 
 # 2A bath level
 filterbathleveldailyA2 <- na.omit(filterbathleveldailyA2)
@@ -1219,18 +1227,34 @@ filtervacuumdailyA2 <- na.omit(filtervacuumdailyA2)
 lowfiltervacuumdailyA2 <- filtfilt(lowbf, filtervacuumdailyA2$data)
 lowpassvacuumdailyA2 <- data.frame(time = filtervacuumdailyA2$time,
                                      date = filtervacuumdailyA2$date,
-                                     vacuum = lowfiltervacuumdailyA2)
+                                     filter = lowfiltervacuumdailyA2,
+                                   nofilter = filtervacuumdailyA2$data)
 lowpassvacuumdailyA2fin <- lowpassvacuumdailyA2 %>%
-  gather(type, data, vacuum)
+  gather(type, data, filter:nofilter)
+
+ggplot(lowpassvacuumdailyA2fin, aes(x=time, y=data, color = type, alpha = type)) + 
+  geom_line() + 
+  scale_alpha_manual(values=c(1,0.5)) + 
+  scale_colour_manual(values=c("red", "blue")) + 
+  xlab("Time (hour)") + ylab("Vacuum Pressure (kPa)") + 
+  ggtitle("2A Drum Vacuum Pressure (Daily Data)")
 
 # 2A cake wash
 filtercakewashdailyA2 <- na.omit(filtercakewashdailyA2)
 lowfiltercakewashdailyA2 <- filtfilt(lowbf, filtercakewashdailyA2$data)
 lowpasscakewashdailyA2 <- data.frame(time = filtercakewashdailyA2$time,
                                        date = filtercakewashdailyA2$date,
-                                       cakewash = lowfiltercakewashdailyA2)
+                                       filter = lowfiltercakewashdailyA2,
+                                     nofilter = filtercakewashdailyA2$data)
 lowpasscakewashdailyA2fin <- lowpasscakewashdailyA2 %>%
-  gather(type, data, cakewash)
+  gather(type, data, filter:nofilter)
+
+ggplot(lowpasscakewashdailyA2fin, aes(x=time, y=data, color = type, alpha = type)) + 
+  geom_line() + 
+  scale_alpha_manual(values=c(1,0.5)) + 
+  scale_colour_manual(values=c("red", "blue")) + 
+  xlab("Time (hour)") + ylab("Cake Wash Flow (kl/h)") + 
+  ggtitle("2A Drum Cake Wash Flow (Daily Data)")
 
 # 2A soda filtrate conc.
 filtersodafiltratedailyA2 <- na.omit(filtersodafiltratedailyA2)
@@ -1291,36 +1315,68 @@ filterdrumspeeddailyB1 <- na.omit(filterdrumspeeddailyB1)
 lowfilterdrumspeeddailyB1 <- filtfilt(lowbf, filterdrumspeeddailyB1$data)
 lowpassdrumspeeddailyB1 <- data.frame(time = filterdrumspeeddailyB1$time,
                                         date = filterdrumspeeddailyB1$date,
-                                        drumspeed = lowfilterdrumspeeddailyB1)
+                                        filter = lowfilterdrumspeeddailyB1,
+                                      nofilter = filterdrumspeeddailyB1$data)
 lowpassdrumspeeddailyB1fin <- lowpassdrumspeeddailyB1 %>%
-  gather(type, data, drumspeed)
+  gather(type, data, filter:nofilter)
+
+ggplot(lowpassdrumspeeddailyB1fin, aes(x=time, y=data, color = type, alpha = type)) + 
+  geom_line() + 
+  scale_alpha_manual(values=c(1,0.5)) + 
+  scale_colour_manual(values=c("red", "blue")) + 
+  xlab("Time (hour)") + ylab("Drum Speed (RPM)") + 
+  ggtitle("1B Drum Drum Speed (Daily Data)")
 
 # 1B bath level
 filterbathleveldailyB1 <- na.omit(filterbathleveldailyB1)
 lowfilterbathleveldailyB1 <- filtfilt(lowbf, filterbathleveldailyB1$data)
 lowpassbathleveldailyB1 <- data.frame(time = filterbathleveldailyB1$time,
                                         date = filterbathleveldailyB1$date,
-                                        bathlevel = lowfilterbathleveldailyB1)
+                                       filter = lowfilterbathleveldailyB1,
+                                      nofilter = filterbathleveldailyB1$data)
 lowpassbathleveldailyB1fin <- lowpassbathleveldailyB1 %>%
-  gather(type, data, bathlevel)
+  gather(type, data, filter:nofilter)
+
+ggplot(lowpassbathleveldailyB1fin, aes(x=time, y=data, color = type, alpha = type)) + 
+  geom_line() + 
+  scale_alpha_manual(values=c(1,0.5)) + 
+  scale_colour_manual(values=c("red", "blue")) + 
+  xlab("Time (hour)") + ylab("Bath Level (%)") + 
+  ggtitle("1B Drum Bath Level (Daily Data)")
 
 # 1B vacuum 
 filtervacuumdailyB1 <- na.omit(filtervacuumdailyB1)
 lowfiltervacuumdailyB1 <- filtfilt(lowbf, filtervacuumdailyB1$data)
 lowpassvacuumdailyB1 <- data.frame(time = filtervacuumdailyB1$time,
                                      date = filtervacuumdailyB1$date,
-                                     vacuum = lowfiltervacuumdailyB1)
+                                     filter = lowfiltervacuumdailyB1,
+                                   nofilter = filtervacuumdailyB1$data)
 lowpassvacuumdailyB1fin <- lowpassvacuumdailyB1 %>%
-  gather(type, data, vacuum)
+  gather(type, data, filter:nofilter)
+
+ggplot(lowpassvacuumdailyB1fin, aes(x=time, y=data, color = type, alpha = type)) + 
+  geom_line() + 
+  scale_alpha_manual(values=c(1,0.5)) + 
+  scale_colour_manual(values=c("red", "blue")) + 
+  xlab("Time (hour)") + ylab("Vacuum Pressure (kPa)") + 
+  ggtitle("1B Drum Vacuum Pressure (Daily Data)")
 
 # 1B cake wash
 filtercakewashdailyB1 <- na.omit(filtercakewashdailyB1)
 lowfiltercakewashdailyB1 <- filtfilt(lowbf, filtercakewashdailyB1$data)
 lowpasscakewashdailyB1 <- data.frame(time = filtercakewashdailyB1$time,
                                        date = filtercakewashdailyB1$date,
-                                       cakewash = lowfiltercakewashdailyB1)
+                                       filter = lowfiltercakewashdailyB1,
+                                     nofilter = filtercakewashdailyB1$data)
 lowpasscakewashdailyB1fin <- lowpasscakewashdailyB1 %>%
-  gather(type, data, cakewash)
+  gather(type, data, filter:nofilter)
+
+ggplot(lowpasscakewashdailyB1fin, aes(x=time, y=data, color = type, alpha = type)) + 
+  geom_line() + 
+  scale_alpha_manual(values=c(1,0.5)) + 
+  scale_colour_manual(values=c("red", "blue")) + 
+  xlab("Time (hour)") + ylab("Cake Wash Flow (kl/h)") + 
+  ggtitle("1B Drum Cake Wash Flow (Daily Data)")
 
 # 1B soda filtrate conc.
 filtersodafiltratedailyB1 <- na.omit(filtersodafiltratedailyB1)
@@ -1381,27 +1437,51 @@ filterdrumspeeddailyB2 <- na.omit(filterdrumspeeddailyB2)
 lowfilterdrumspeeddailyB2 <- filtfilt(lowbf, filterdrumspeeddailyB2$data)
 lowpassdrumspeeddailyB2 <- data.frame(time = filterdrumspeeddailyB2$time,
                                         date = filterdrumspeeddailyB2$date,
-                                        drumspeed = lowfilterdrumspeeddailyB2)
+                                        filter = lowfilterdrumspeeddailyB2,
+                                      nofilter = filterdrumspeeddailyB2$data)
 lowpassdrumspeeddailyB2fin <- lowpassdrumspeeddailyB2 %>%
-  gather(type, data, drumspeed)
+  gather(type, data, filter:nofilter)
+
+ggplot(lowpassdrumspeeddailyB2fin, aes(x=time, y=data, color = type, alpha = type)) + 
+  geom_line() + 
+  scale_alpha_manual(values=c(1,0.5)) + 
+  scale_colour_manual(values=c("red", "blue")) + 
+  xlab("Time (hour)") + ylab("Drum Speed (RPM)") + 
+  ggtitle("2B Drum Drum Speed (Daily Data)")
 
 # 2B bath level
 filterbathleveldailyB2 <- na.omit(filterbathleveldailyB2)
 lowfilterbathleveldailyB2 <- filtfilt(lowbf, filterbathleveldailyB2$data)
 lowpassbathleveldailyB2 <- data.frame(time = filterbathleveldailyB2$time,
                                         date = filterbathleveldailyB2$date,
-                                        bathlevel = lowfilterbathleveldailyB2)
+                                        filter = lowfilterbathleveldailyB2,
+                                      nofilter = filterbathleveldailyB2$data)
 lowpassbathleveldailyB2fin <- lowpassbathleveldailyB2 %>%
-  gather(type, data, bathlevel)
+  gather(type, data, filter:nofilter)
+
+ggplot(lowpassbathleveldailyB2fin, aes(x=time, y=data, color = type, alpha = type)) + 
+  geom_line() + 
+  scale_alpha_manual(values=c(1,0.5)) + 
+  scale_colour_manual(values=c("red", "blue")) + 
+  xlab("Time (hour)") + ylab("Bath Level (%)") + 
+  ggtitle("2B Drum Bath Level (Daily Data)")
 
 # 2B vacuum 
 filtervacuumdailyB2 <- na.omit(filtervacuumdailyB2)
 lowfiltervacuumdailyB2 <- filtfilt(lowbf, filtervacuumdailyB2$data)
 lowpassvacuumdailyB2 <- data.frame(time = filtervacuumdailyB2$time,
                                      date = filtervacuumdailyB2$date,
-                                     vacuum = lowfiltervacuumdailyB2)
+                                     filter = lowfiltervacuumdailyB2,
+                                   nofilter = filtervacuumdailyB2$data)
 lowpassvacuumdailyB2fin <- lowpassvacuumdailyB2 %>%
-  gather(type, data, vacuum)
+  gather(type, data, filter:nofilter)
+
+ggplot(lowpassvacuumdailyB2fin, aes(x=time, y=data, color = type, alpha = type)) + 
+  geom_line() + 
+  scale_alpha_manual(values=c(1,0.5)) + 
+  scale_colour_manual(values=c("red", "blue")) + 
+  xlab("Time (hour)") + ylab("Vacuum Pressure (kPa)") + 
+  ggtitle("2B Drum Vacuum Pressure (Daily Data)")
 
 
 # 2B cake wash
@@ -1463,13 +1543,14 @@ ggplot(lowpassoxfiltratedailyB2fin, aes(x=time, y=data, color = type, alpha = ty
 #------------------------------------------------------------------------------------------------
 #fourier analysis--------------------------------------------------------------------------------
 #throughput
-throughputdaily.ts <- ts(filterthroughputdaily$data) #change to time series
+throughputdaily.ts <- ts(filterthroughputdaily$data[100:200]) #change to time series
 throughputdaily.freq <- (1/(24*60*60))  #sample frequency in Hz 
 throughputdaily.dur <- length(throughputdaily.ts)*24*60*60 # length of signal in seconds 
 throughputdaily.tot <- throughputdaily.freq*throughputdaily.dur #total number of sample
 
 throughputdaily.x <- seq(0, throughputdaily.dur, length.out = throughputdaily.tot)
 throughputdaily.fourier <- fft(throughputdaily.ts)
+
 throughputdaily.amo <- 2*Mod(throughputdaily.fourier)/(throughputdaily.tot) #amplitude
 throughputdaily.freqvec <- 0:(length(throughputdaily.amo)-1) #vector from 0 to end of signal -> new x-axis
 
@@ -1477,23 +1558,23 @@ throughputdaily.amo[throughputdaily.freqvec == 0] <-
   throughputdaily.amo[throughputdaily.freqvec == 0]/2 #amplitude at the zero frequency has to be halfed at freq=0  
 throughputdaily.freqvec <-
   throughputdaily.freqvec/throughputdaily.dur #vector divided by duration of the signal -> frequency vector -> new x-axis
-throughputdaily.dfFouri <- data.frame(freq = throughputdaily.freqvec[1:as.integer(0.5*throughputdaily.freq*throughputdaily.dur)]*60*60*24,
+throughputdaily.dfFouri <- data.frame(freq = throughputdaily.freqvec[1:as.integer(0.5*throughputdaily.freq*throughputdaily.dur)]*24*60*60,
                                         amount = throughputdaily.amo[1:as.integer(0.5*throughputdaily.freq*throughputdaily.dur)])
 throughputdaily.dfFouri <- throughputdaily.dfFouri %>%
-  mutate(period = ifelse(throughputdaily.dfFouri$amount >= 1,
+  mutate(period = ifelse(throughputdaily.dfFouri$amount >= 5,
                          paste(round(1/throughputdaily.dfFouri$freq,2),"days"),""))
 throughputdaily.dfFouri[1,3] <- ""
 ggplot(throughputdaily.dfFouri,aes(x=freq,y=amount)) + 
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label = period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) +
+  xlim(0,0.5) + ylim(0,35) +
   labs(x = "Freq, 1/day",y = "Magnitude", title = "Throughput Fourier Analysis")
 
 # 1A Drum----------------------------------------------------------------------------------------
 # 1A feed flow
-feedflowdailyA1.ts <- ts(filterfeedflowdailyA1$data) #change to time series
-feedflowdailyA1.freq <- (1/(30*60))  #sample frequency in Hz 
-feedflowdailyA1.dur <- length(feedflowdailyA1.ts)*30*60 # length of signal in seconds 
+feedflowdailyA1.ts <- ts(filterfeedflowdailyA1$data[100:200]) #change to time series
+feedflowdailyA1.freq <- (1/(24*60*60))  #sample frequency in Hz 
+feedflowdailyA1.dur <- length(feedflowdailyA1.ts)*24*60*60 # length of signal in seconds 
 feedflowdailyA1.tot <- feedflowdailyA1.freq*feedflowdailyA1.dur #total number of sample
 
 feedflowdailyA1.x <- seq(0, feedflowdailyA1.dur, length.out = tot)
@@ -1513,13 +1594,13 @@ feedflowdailyA1.dfFouri[1,3] <- ""
 ggplot(feedflowdailyA1.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,7.5) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="1A Drum Feed Flow Fourier Analysis")
 
 # 1A drum speed
-drumspeeddailyA1.ts <- ts(filterdrumspeeddailyA1$data) #change to time series
-drumspeeddailyA1.freq <- (1/(30*60))  #sample frequency in Hz 
-drumspeeddailyA1.dur <- length(drumspeeddailyA1.ts)*30*60 # length of signal in seconds 
+drumspeeddailyA1.ts <- ts(filterdrumspeeddailyA1$data[100:200]) #change to time series
+drumspeeddailyA1.freq <- (1/(24*60*60))  #sample frequency in Hz 
+drumspeeddailyA1.dur <- length(drumspeeddailyA1.ts)*24*60*60 # length of signal in seconds 
 drumspeeddailyA1.tot <- drumspeeddailyA1.freq*drumspeeddailyA1.dur #total number of sample
 
 drumspeeddailyA1.x <- seq(0, drumspeeddailyA1.dur, length.out = tot)
@@ -1533,19 +1614,19 @@ drumspeeddailyA1.freqvec <- drumspeeddailyA1.freqvec/drumspeeddailyA1.dur #vecto
 drumspeeddailyA1.dfFouri <- data.frame(freq = drumspeeddailyA1.freqvec[1:as.integer(0.5*drumspeeddailyA1.freq*drumspeeddailyA1.dur)]*60*60*24,
                                          amount = drumspeeddailyA1.amo[1:as.integer(0.5*drumspeeddailyA1.freq*drumspeeddailyA1.dur)])
 drumspeeddailyA1.dfFouri <- drumspeeddailyA1.dfFouri %>%
-  mutate(period = ifelse(drumspeeddailyA1.dfFouri$amount >= 1,
+  mutate(period = ifelse(drumspeeddailyA1.dfFouri$amount >= 0.05,
                          paste(round(1/drumspeeddailyA1.dfFouri$freq, 2),"days"),""))
 drumspeeddailyA1.dfFouri[1,3] <- ""
 ggplot(drumspeeddailyA1.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,0.13) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="1A Drum Speed Fourier Analysis")
 
 # 1A bath level
-bathleveldailyA1.ts <- ts(filterbathleveldailyA1$data) #change to time series
-bathleveldailyA1.freq <- (1/(30*60))  #sample frequency in Hz 
-bathleveldailyA1.dur <- length(bathleveldailyA1.ts)*30*60 # length of signal in seconds 
+bathleveldailyA1.ts <- ts(filterbathleveldailyA1$data[100:200]) #change to time series
+bathleveldailyA1.freq <- (1/(24*60*60))  #sample frequency in Hz 
+bathleveldailyA1.dur <- length(bathleveldailyA1.ts)*24*60*60 # length of signal in seconds 
 bathleveldailyA1.tot <- bathleveldailyA1.freq*bathleveldailyA1.dur #total number of sample
 
 bathleveldailyA1.x <- seq(0, bathleveldailyA1.dur, length.out = tot)
@@ -1565,13 +1646,13 @@ bathleveldailyA1.dfFouri[1,3] <- ""
 ggplot(bathleveldailyA1.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  ylim(0,4) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="1A Drum Bath Level Fourier Analysis")
 
 # 1A vacuum
-vacuumdailyA1.ts <- ts(filtervacuumdailyA1$data) #change to time series
-vacuumdailyA1.freq <- (1/(30*60))  #sample frequency in Hz 
-vacuumdailyA1.dur <- length(vacuumdailyA1.ts)*30*60 # length of signal in seconds 
+vacuumdailyA1.ts <- ts(filtervacuumdailyA1$data[100:200]) #change to time series
+vacuumdailyA1.freq <- (1/(24*60*60))  #sample frequency in Hz 
+vacuumdailyA1.dur <- length(vacuumdailyA1.ts)*24*60*60 # length of signal in seconds 
 vacuumdailyA1.tot <- vacuumdailyA1.freq*vacuumdailyA1.dur #total number of sample
 
 vacuumdailyA1.x <- seq(0, vacuumdailyA1.dur, length.out = tot)
@@ -1591,14 +1672,14 @@ vacuumdailyA1.dfFouri[1,3] <- ""
 ggplot(vacuumdailyA1.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,3) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="1A Drum Vacuum Pressure Fourier Analysis")
 
 
 # 1A cake wash
-cakewashdailyA1.ts <- ts(filtercakewashdailyA1$data) #change to time series
-cakewashdailyA1.freq <- (1/(30*60))  #sample frequency in Hz 
-cakewashdailyA1.dur <- length(cakewashdailyA1.ts)*30*60 # length of signal in seconds 
+cakewashdailyA1.ts <- ts(filtercakewashdailyA1$data[100:200]) #change to time series
+cakewashdailyA1.freq <- (1/(24*60*60))  #sample frequency in Hz 
+cakewashdailyA1.dur <- length(cakewashdailyA1.ts)*24*60*60 # length of signal in seconds 
 cakewashdailyA1.tot <- cakewashdailyA1.freq*cakewashdailyA1.dur #total number of sample
 
 cakewashdailyA1.x <- seq(0, cakewashdailyA1.dur, length.out = tot)
@@ -1612,19 +1693,19 @@ cakewashdailyA1.freqvec <- cakewashdailyA1.freqvec/cakewashdailyA1.dur #vector d
 cakewashdailyA1.dfFouri <- data.frame(freq = cakewashdailyA1.freqvec[1:as.integer(0.5*cakewashdailyA1.freq*cakewashdailyA1.dur)]*60*60*24,
                                         amount = cakewashdailyA1.amo[1:as.integer(0.5*cakewashdailyA1.freq*cakewashdailyA1.dur)])
 cakewashdailyA1.dfFouri <- cakewashdailyA1.dfFouri %>%
-  mutate(period = ifelse(cakewashdailyA1.dfFouri$amount >= 1,
+  mutate(period = ifelse(cakewashdailyA1.dfFouri$amount >= 0.25,
                          paste(round(1/cakewashdailyA1.dfFouri$freq, 2),"days"),""))
 cakewashdailyA1.dfFouri[1,3] <- ""
 ggplot(cakewashdailyA1.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,0.5) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="1A Drum Cake Wash Fourier Analysis")
 
 # 1A soda filtrate conc.
-sodafiltratedailyA1.ts <- ts(filtersodafiltratedailyA1$data) #change to time series
-sodafiltratedailyA1.freq <- (1/(30*60))  #sample frequency in Hz 
-sodafiltratedailyA1.dur <- length(sodafiltratedailyA1.ts)*30*60 # length of signal in seconds 
+sodafiltratedailyA1.ts <- ts(filtersodafiltratedailyA1$data[100:200]) #change to time series
+sodafiltratedailyA1.freq <- (1/(24*60*60))  #sample frequency in Hz 
+sodafiltratedailyA1.dur <- length(sodafiltratedailyA1.ts)*24*60*60 # length of signal in seconds 
 sodafiltratedailyA1.tot <- sodafiltratedailyA1.freq*sodafiltratedailyA1.dur #total number of sample
 
 sodafiltratedailyA1.x <- seq(0, sodafiltratedailyA1.dur, length.out = tot)
@@ -1644,14 +1725,14 @@ sodafiltratedailyA1.dfFouri[1,3] <- ""
 ggplot(sodafiltratedailyA1.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,9) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="1A Drum Soda Filtrate Fourier Analysis")
 
 
 # 1A oxalate filtrate
-oxfiltratedailyA1.ts <- ts(filteroxfiltratedailyA1$data) #change to time series
-oxfiltratedailyA1.freq <- (1/(30*60))  #sample frequency in Hz 
-oxfiltratedailyA1.dur <- length(oxfiltratedailyA1.ts)*30*60 # length of signal in seconds 
+oxfiltratedailyA1.ts <- ts(filteroxfiltratedailyA1$data[100:200]) #change to time series
+oxfiltratedailyA1.freq <- (1/(24*60*60))  #sample frequency in Hz 
+oxfiltratedailyA1.dur <- length(oxfiltratedailyA1.ts)*24*60*60 # length of signal in seconds 
 oxfiltratedailyA1.tot <- oxfiltratedailyA1.freq*oxfiltratedailyA1.dur #total number of sample
 
 oxfiltratedailyA1.x <- seq(0, oxfiltratedailyA1.dur, length.out = tot)
@@ -1665,21 +1746,21 @@ oxfiltratedailyA1.freqvec <- oxfiltratedailyA1.freqvec/oxfiltratedailyA1.dur #ve
 oxfiltratedailyA1.dfFouri <- data.frame(freq = oxfiltratedailyA1.freqvec[1:as.integer(0.5*oxfiltratedailyA1.freq*oxfiltratedailyA1.dur)]*60*60*24,
                                           amount = oxfiltratedailyA1.amo[1:as.integer(0.5*oxfiltratedailyA1.freq*oxfiltratedailyA1.dur)])
 oxfiltratedailyA1.dfFouri <- oxfiltratedailyA1.dfFouri %>%
-  mutate(period = ifelse(oxfiltratedailyA1.dfFouri$amount >= 1,
+  mutate(period = ifelse(oxfiltratedailyA1.dfFouri$amount >= 0.1,
                          paste(round(1/oxfiltratedailyA1.dfFouri$freq, 2),"days"),""))
 oxfiltratedailyA1.dfFouri[1,3] <- ""
 ggplot(oxfiltratedailyA1.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,0.7) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="1A Drum Oxalate Filtrate Fourier Analysis")
 
 
 # 2A Drum----------------------------------------------------------------------------------------
 # 2A feed flow
-feedflowdailyA2.ts <- ts(filterfeedflowdailyA2$data) #change to time series
-feedflowdailyA2.freq <- (1/(30*60))  #sample frequency in Hz 
-feedflowdailyA2.dur <- length(feedflowdailyA2.ts)*30*60 # length of signal in seconds 
+feedflowdailyA2.ts <- ts(filterfeedflowdailyA2$data[100:200]) #change to time series
+feedflowdailyA2.freq <- (1/(24*60*60))  #sample frequency in Hz 
+feedflowdailyA2.dur <- length(feedflowdailyA2.ts)*24*60*60 # length of signal in seconds 
 feedflowdailyA2.tot <- feedflowdailyA2.freq*feedflowdailyA2.dur #total number of sample
 
 feedflowdailyA2.x <- seq(0, feedflowdailyA2.dur, length.out = tot)
@@ -1699,13 +1780,13 @@ feedflowdailyA2.dfFouri[1,3] <- ""
 ggplot(feedflowdailyA2.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="2A Drum Feed Flow Fourier Analysis")
 
 # 2A drum speed
-drumspeeddailyA2.ts <- ts(filterdrumspeeddailyA2$data) #change to time series
-drumspeeddailyA2.freq <- (1/(30*60))  #sample frequency in Hz 
-drumspeeddailyA2.dur <- length(drumspeeddailyA2.ts)*30*60 # length of signal in seconds 
+drumspeeddailyA2.ts <- ts(filterdrumspeeddailyA2$data[100:200]) #change to time series
+drumspeeddailyA2.freq <- (1/(24*60*60))  #sample frequency in Hz 
+drumspeeddailyA2.dur <- length(drumspeeddailyA2.ts)*24*60*60 # length of signal in seconds 
 drumspeeddailyA2.tot <- drumspeeddailyA2.freq*drumspeeddailyA2.dur #total number of sample
 
 drumspeeddailyA2.x <- seq(0, drumspeeddailyA2.dur, length.out = tot)
@@ -1719,19 +1800,19 @@ drumspeeddailyA2.freqvec <- drumspeeddailyA2.freqvec/drumspeeddailyA2.dur #vecto
 drumspeeddailyA2.dfFouri <- data.frame(freq = drumspeeddailyA2.freqvec[1:as.integer(0.5*drumspeeddailyA2.freq*drumspeeddailyA2.dur)]*60*60*24,
                                          amount = drumspeeddailyA2.amo[1:as.integer(0.5*drumspeeddailyA2.freq*drumspeeddailyA2.dur)])
 drumspeeddailyA2.dfFouri <- drumspeeddailyA2.dfFouri %>%
-  mutate(period = ifelse(drumspeeddailyA2.dfFouri$amount >= 1,
+  mutate(period = ifelse(drumspeeddailyA2.dfFouri$amount >= 0.05,
                          paste(round(1/drumspeeddailyA2.dfFouri$freq, 2),"days"),""))
 drumspeeddailyA2.dfFouri[1,3] <- ""
 ggplot(drumspeeddailyA2.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,0.15) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="2A Drum Speed Fourier Analysis")
 
 # 2A bath level
-bathleveldailyA2.ts <- ts(filterbathleveldailyA2$data) #change to time series
-bathleveldailyA2.freq <- (1/(30*60))  #sample frequency in Hz 
-bathleveldailyA2.dur <- length(bathleveldailyA2.ts)*30*60 # length of signal in seconds 
+bathleveldailyA2.ts <- ts(filterbathleveldailyA2$data[100:200]) #change to time series
+bathleveldailyA2.freq <- (1/(24*60*60))  #sample frequency in Hz 
+bathleveldailyA2.dur <- length(bathleveldailyA2.ts)*24*60*60 # length of signal in seconds 
 bathleveldailyA2.tot <- bathleveldailyA2.freq*bathleveldailyA2.dur #total number of sample
 
 bathleveldailyA2.x <- seq(0, bathleveldailyA2.dur, length.out = tot)
@@ -1751,13 +1832,13 @@ bathleveldailyA2.dfFouri[1,3] <- ""
 ggplot(bathleveldailyA2.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,6) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="2A Drum Bath Level Fourier Analysis")
 
 # 2A vacuum
-vacuumdailyA2.ts <- ts(filtervacuumdailyA2$data) #change to time series
-vacuumdailyA2.freq <- (1/(30*60))  #sample frequency in Hz 
-vacuumdailyA2.dur <- length(vacuumdailyA2.ts)*30*60 # length of signal in seconds 
+vacuumdailyA2.ts <- ts(filtervacuumdailyA2$data[100:200]) #change to time series
+vacuumdailyA2.freq <- (1/(24*60*60))  #sample frequency in Hz 
+vacuumdailyA2.dur <- length(vacuumdailyA2.ts)*24*60*60 # length of signal in seconds 
 vacuumdailyA2.tot <- vacuumdailyA2.freq*vacuumdailyA2.dur #total number of sample
 
 vacuumdailyA2.x <- seq(0, vacuumdailyA2.dur, length.out = tot)
@@ -1777,14 +1858,14 @@ vacuumdailyA2.dfFouri[1,3] <- ""
 ggplot(vacuumdailyA2.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,4) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="2A Drum Vacuum Pressure Fourier Analysis")
 
 
 # 2A cake wash
-cakewashdailyA2.ts <- ts(filtercakewashdailyA2$data) #change to time series
-cakewashdailyA2.freq <- (1/(30*60))  #sample frequency in Hz 
-cakewashdailyA2.dur <- length(cakewashdailyA2.ts)*30*60 # length of signal in seconds 
+cakewashdailyA2.ts <- ts(filtercakewashdailyA2$data[100:200]) #change to time series
+cakewashdailyA2.freq <- (1/(24*60*60))  #sample frequency in Hz 
+cakewashdailyA2.dur <- length(cakewashdailyA2.ts)*24*60*60 # length of signal in seconds 
 cakewashdailyA2.tot <- cakewashdailyA2.freq*cakewashdailyA2.dur #total number of sample
 
 cakewashdailyA2.x <- seq(0, cakewashdailyA2.dur, length.out = tot)
@@ -1798,19 +1879,19 @@ cakewashdailyA2.freqvec <- cakewashdailyA2.freqvec/cakewashdailyA2.dur #vector d
 cakewashdailyA2.dfFouri <- data.frame(freq = cakewashdailyA2.freqvec[1:as.integer(0.5*cakewashdailyA2.freq*cakewashdailyA2.dur)]*60*60*24,
                                         amount = cakewashdailyA2.amo[1:as.integer(0.5*cakewashdailyA2.freq*cakewashdailyA2.dur)])
 cakewashdailyA2.dfFouri <- cakewashdailyA2.dfFouri %>%
-  mutate(period = ifelse(cakewashdailyA2.dfFouri$amount >= 1,
+  mutate(period = ifelse(cakewashdailyA2.dfFouri$amount >= 0.5,
                          paste(round(1/cakewashdailyA2.dfFouri$freq, 2),"days"),""))
 cakewashdailyA2.dfFouri[1,3] <- ""
 ggplot(cakewashdailyA2.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,1.7) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="2A Drum Cake Wash Fourier Analysis")
 
 # 2A soda filtrate conc.
-sodafiltratedailyA2.ts <- ts(filtersodafiltratedailyA2$data) #change to time series
-sodafiltratedailyA2.freq <- (1/(30*60))  #sample frequency in Hz 
-sodafiltratedailyA2.dur <- length(sodafiltratedailyA2.ts)*30*60 # length of signal in seconds 
+sodafiltratedailyA2.ts <- ts(filtersodafiltratedailyA2$data[100:200]) #change to time series
+sodafiltratedailyA2.freq <- (1/(24*60*60))  #sample frequency in Hz 
+sodafiltratedailyA2.dur <- length(sodafiltratedailyA2.ts)*24*60*60 # length of signal in seconds 
 sodafiltratedailyA2.tot <- sodafiltratedailyA2.freq*sodafiltratedailyA2.dur #total number of sample
 
 sodafiltratedailyA2.x <- seq(0, sodafiltratedailyA2.dur, length.out = tot)
@@ -1830,14 +1911,14 @@ sodafiltratedailyA2.dfFouri[1,3] <- ""
 ggplot(sodafiltratedailyA2.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,11) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="2A Drum Soda Filtrate Fourier Analysis")
 
 
 # 2A oxalate filtrate
-oxfiltratedailyA2.ts <- ts(filteroxfiltratedailyA2$data) #change to time series
-oxfiltratedailyA2.freq <- (1/(30*60))  #sample frequency in Hz 
-oxfiltratedailyA2.dur <- length(oxfiltratedailyA2.ts)*30*60 # length of signal in seconds 
+oxfiltratedailyA2.ts <- ts(filteroxfiltratedailyA2$data[100:200]) #change to time series
+oxfiltratedailyA2.freq <- (1/(24*60*60))  #sample frequency in Hz 
+oxfiltratedailyA2.dur <- length(oxfiltratedailyA2.ts)*24*60*60 # length of signal in seconds 
 oxfiltratedailyA2.tot <- oxfiltratedailyA2.freq*oxfiltratedailyA2.dur #total number of sample
 
 oxfiltratedailyA2.x <- seq(0, oxfiltratedailyA2.dur, length.out = tot)
@@ -1851,20 +1932,20 @@ oxfiltratedailyA2.freqvec <- oxfiltratedailyA2.freqvec/oxfiltratedailyA2.dur #ve
 oxfiltratedailyA2.dfFouri <- data.frame(freq = oxfiltratedailyA2.freqvec[1:as.integer(0.5*oxfiltratedailyA2.freq*oxfiltratedailyA2.dur)]*60*60*24,
                                           amount = oxfiltratedailyA2.amo[1:as.integer(0.5*oxfiltratedailyA2.freq*oxfiltratedailyA2.dur)])
 oxfiltratedailyA2.dfFouri <- oxfiltratedailyA2.dfFouri %>%
-  mutate(period = ifelse(oxfiltratedailyA2.dfFouri$amount >= 1,
+  mutate(period = ifelse(oxfiltratedailyA2.dfFouri$amount >= 0.1,
                          paste(round(1/oxfiltratedailyA2.dfFouri$freq, 2),"days"),""))
 oxfiltratedailyA2.dfFouri[1,3] <- ""
 ggplot(oxfiltratedailyA2.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,0.7) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="2A Drum Oxalate Filtrate Fourier Analysis")
 
 # 1B Drum----------------------------------------------------------------------------------------
 # 1B feed flow
-feedflowdailyB1.ts <- ts(filterfeedflowdailyB1$data) #change to time series
-feedflowdailyB1.freq <- (1/(30*60))  #sample frequency in Hz 
-feedflowdailyB1.dur <- length(feedflowdailyB1.ts)*30*60 # length of signal in seconds 
+feedflowdailyB1.ts <- ts(filterfeedflowdailyB1$data[100:200]) #change to time series
+feedflowdailyB1.freq <- (1/(24*60*60))  #sample frequency in Hz 
+feedflowdailyB1.dur <- length(feedflowdailyB1.ts)*24*60*60 # length of signal in seconds 
 feedflowdailyB1.tot <- feedflowdailyB1.freq*feedflowdailyB1.dur #total number of sample
 
 feedflowdailyB1.x <- seq(0, feedflowdailyB1.dur, length.out = tot)
@@ -1884,13 +1965,13 @@ feedflowdailyB1.dfFouri[1,3] <- ""
 ggplot(feedflowdailyB1.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,12) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="1B Drum Feed Flow Fourier Analysis")
 
 # 1B drum speed
-drumspeeddailyB1.ts <- ts(filterdrumspeeddailyB1$data) #change to time series
-drumspeeddailyB1.freq <- (1/(30*60))  #sample frequency in Hz 
-drumspeeddailyB1.dur <- length(drumspeeddailyB1.ts)*30*60 # length of signal in seconds 
+drumspeeddailyB1.ts <- ts(filterdrumspeeddailyB1$data[100:200]) #change to time series
+drumspeeddailyB1.freq <- (1/(24*60*60))  #sample frequency in Hz 
+drumspeeddailyB1.dur <- length(drumspeeddailyB1.ts)*24*60*60 # length of signal in seconds 
 drumspeeddailyB1.tot <- drumspeeddailyB1.freq*drumspeeddailyB1.dur #total number of sample
 
 drumspeeddailyB1.x <- seq(0, drumspeeddailyB1.dur, length.out = tot)
@@ -1904,19 +1985,19 @@ drumspeeddailyB1.freqvec <- drumspeeddailyB1.freqvec/drumspeeddailyB1.dur #vecto
 drumspeeddailyB1.dfFouri <- data.frame(freq = drumspeeddailyB1.freqvec[1:as.integer(0.5*drumspeeddailyB1.freq*drumspeeddailyB1.dur)]*60*60*24,
                                          amount = drumspeeddailyB1.amo[1:as.integer(0.5*drumspeeddailyB1.freq*drumspeeddailyB1.dur)])
 drumspeeddailyB1.dfFouri <- drumspeeddailyB1.dfFouri %>%
-  mutate(period = ifelse(drumspeeddailyB1.dfFouri$amount >= 1,
+  mutate(period = ifelse(drumspeeddailyB1.dfFouri$amount >= 0.05,
                          paste(round(1/drumspeeddailyB1.dfFouri$freq, 2),"days"),""))
 drumspeeddailyB1.dfFouri[1,3] <- ""
 ggplot(drumspeeddailyB1.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,0.15) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="1B Drum Speed Fourier Analysis")
 
 # 1B bath level
-bathleveldailyB1.ts <- ts(filterbathleveldailyB1$data) #change to time series
-bathleveldailyB1.freq <- (1/(30*60))  #sample frequency in Hz 
-bathleveldailyB1.dur <- length(bathleveldailyB1.ts)*30*60 # length of signal in seconds 
+bathleveldailyB1.ts <- ts(filterbathleveldailyB1$data[100:200]) #change to time series
+bathleveldailyB1.freq <- (1/(24*60*60))  #sample frequency in Hz 
+bathleveldailyB1.dur <- length(bathleveldailyB1.ts)*24*60*60 # length of signal in seconds 
 bathleveldailyB1.tot <- bathleveldailyB1.freq*bathleveldailyB1.dur #total number of sample
 
 bathleveldailyB1.x <- seq(0, bathleveldailyB1.dur, length.out = tot)
@@ -1936,13 +2017,13 @@ bathleveldailyB1.dfFouri[1,3] <- ""
 ggplot(bathleveldailyB1.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,7) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="1B Drum Bath Level Fourier Analysis")
 
 # 1B vacuum
-vacuumdailyB1.ts <- ts(filtervacuumdailyB1$data) #change to time series
-vacuumdailyB1.freq <- (1/(30*60))  #sample frequency in Hz 
-vacuumdailyB1.dur <- length(vacuumdailyB1.ts)*30*60 # length of signal in seconds 
+vacuumdailyB1.ts <- ts(filtervacuumdailyB1$data[100:200]) #change to time series
+vacuumdailyB1.freq <- (1/(24*60*60))  #sample frequency in Hz 
+vacuumdailyB1.dur <- length(vacuumdailyB1.ts)*24*60*60 # length of signal in seconds 
 vacuumdailyB1.tot <- vacuumdailyB1.freq*vacuumdailyB1.dur #total number of sample
 
 vacuumdailyB1.x <- seq(0, vacuumdailyB1.dur, length.out = tot)
@@ -1956,20 +2037,20 @@ vacuumdailyB1.freqvec <- vacuumdailyB1.freqvec/vacuumdailyB1.dur #vector divided
 vacuumdailyB1.dfFouri <- data.frame(freq = vacuumdailyB1.freqvec[1:as.integer(0.5*vacuumdailyB1.freq*vacuumdailyB1.dur)]*60*60*24,
                                       amount = vacuumdailyB1.amo[1:as.integer(0.5*vacuumdailyB1.freq*vacuumdailyB1.dur)])
 vacuumdailyB1.dfFouri <- vacuumdailyB1.dfFouri %>%
-  mutate(period = ifelse(vacuumdailyB1.dfFouri$amount >= 1,
+  mutate(period = ifelse(vacuumdailyB1.dfFouri$amount >= 0.8,
                          paste(round(1/vacuumdailyB1.dfFouri$freq, 2),"days"),""))
 vacuumdailyB1.dfFouri[1,3] <- ""
 ggplot(vacuumdailyB1.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,3) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="1B Drum Vacuum Pressure Fourier Analysis")
 
 
 # 1B cake wash
-cakewashdailyB1.ts <- ts(filtercakewashdailyB1$data) #change to time series
-cakewashdailyB1.freq <- (1/(30*60))  #sample frequency in Hz 
-cakewashdailyB1.dur <- length(cakewashdailyB1.ts)*30*60 # length of signal in seconds 
+cakewashdailyB1.ts <- ts(filtercakewashdailyB1$data[100:200]) #change to time series
+cakewashdailyB1.freq <- (1/(24*60*60))  #sample frequency in Hz 
+cakewashdailyB1.dur <- length(cakewashdailyB1.ts)*24*60*60 # length of signal in seconds 
 cakewashdailyB1.tot <- cakewashdailyB1.freq*cakewashdailyB1.dur #total number of sample
 
 cakewashdailyB1.x <- seq(0, cakewashdailyB1.dur, length.out = tot)
@@ -1983,19 +2064,19 @@ cakewashdailyB1.freqvec <- cakewashdailyB1.freqvec/cakewashdailyB1.dur #vector d
 cakewashdailyB1.dfFouri <- data.frame(freq = cakewashdailyB1.freqvec[1:as.integer(0.5*cakewashdailyB1.freq*cakewashdailyB1.dur)]*60*60*24,
                                         amount = cakewashdailyB1.amo[1:as.integer(0.5*cakewashdailyB1.freq*cakewashdailyB1.dur)])
 cakewashdailyB1.dfFouri <- cakewashdailyB1.dfFouri %>%
-  mutate(period = ifelse(cakewashdailyB1.dfFouri$amount >= 1,
+  mutate(period = ifelse(cakewashdailyB1.dfFouri$amount >= 0.5,
                          paste(round(1/cakewashdailyB1.dfFouri$freq, 2),"days"),""))
 cakewashdailyB1.dfFouri[1,3] <- ""
 ggplot(cakewashdailyB1.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,1.5) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="1B Drum Cake Wash Fourier Analysis")
 
 # 1B soda filtrate conc.
-sodafiltratedailyB1.ts <- ts(filtersodafiltratedailyB1$data) #change to time series
-sodafiltratedailyB1.freq <- (1/(30*60))  #sample frequency in Hz 
-sodafiltratedailyB1.dur <- length(sodafiltratedailyB1.ts)*30*60 # length of signal in seconds 
+sodafiltratedailyB1.ts <- ts(filtersodafiltratedailyB1$data[100:200]) #change to time series
+sodafiltratedailyB1.freq <- (1/(24*60*60))  #sample frequency in Hz 
+sodafiltratedailyB1.dur <- length(sodafiltratedailyB1.ts)*24*60*60 # length of signal in seconds 
 sodafiltratedailyB1.tot <- sodafiltratedailyB1.freq*sodafiltratedailyB1.dur #total number of sample
 
 sodafiltratedailyB1.x <- seq(0, sodafiltratedailyB1.dur, length.out = tot)
@@ -2015,14 +2096,14 @@ sodafiltratedailyB1.dfFouri[1,3] <- ""
 ggplot(sodafiltratedailyB1.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,5) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="1B Drum Soda Filtrate Fourier Analysis")
 
 
 # 1B oxalate filtrate
-oxfiltratedailyB1.ts <- ts(filteroxfiltratedailyB1$data) #change to time series
-oxfiltratedailyB1.freq <- (1/(30*60))  #sample frequency in Hz 
-oxfiltratedailyB1.dur <- length(oxfiltratedailyB1.ts)*30*60 # length of signal in seconds 
+oxfiltratedailyB1.ts <- ts(filteroxfiltratedailyB1$data[100:200]) #change to time series
+oxfiltratedailyB1.freq <- (1/(24*60*60))  #sample frequency in Hz 
+oxfiltratedailyB1.dur <- length(oxfiltratedailyB1.ts)*24*60*60 # length of signal in seconds 
 oxfiltratedailyB1.tot <- oxfiltratedailyB1.freq*oxfiltratedailyB1.dur #total number of sample
 
 oxfiltratedailyB1.x <- seq(0, oxfiltratedailyB1.dur, length.out = tot)
@@ -2036,21 +2117,21 @@ oxfiltratedailyB1.freqvec <- oxfiltratedailyB1.freqvec/oxfiltratedailyB1.dur #ve
 oxfiltratedailyB1.dfFouri <- data.frame(freq = oxfiltratedailyB1.freqvec[1:as.integer(0.5*oxfiltratedailyB1.freq*oxfiltratedailyB1.dur)]*60*60*24,
                                           amount = oxfiltratedailyB1.amo[1:as.integer(0.5*oxfiltratedailyB1.freq*oxfiltratedailyB1.dur)])
 oxfiltratedailyB1.dfFouri <- oxfiltratedailyB1.dfFouri %>%
-  mutate(period = ifelse(oxfiltratedailyB1.dfFouri$amount >= 1,
+  mutate(period = ifelse(oxfiltratedailyB1.dfFouri$amount >= 0.5,
                          paste(round(1/oxfiltratedailyB1.dfFouri$freq, 2),"days"),""))
 oxfiltratedailyB1.dfFouri[1,3] <- ""
 ggplot(oxfiltratedailyB1.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,1.5) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="1B Drum Oxalate Filtrate Fourier Analysis")
 
 
 # 2B Drum----------------------------------------------------------------------------------------
 # 2B feed flow
-feedflowdailyB2.ts <- ts(filterfeedflowdailyB2$data) #change to time series
-feedflowdailyB2.freq <- (1/(30*60))  #sample frequency in Hz 
-feedflowdailyB2.dur <- length(feedflowdailyB2.ts)*30*60 # length of signal in seconds 
+feedflowdailyB2.ts <- ts(filterfeedflowdailyB2$data[100:200]) #change to time series
+feedflowdailyB2.freq <- (1/(24*60*60))  #sample frequency in Hz 
+feedflowdailyB2.dur <- length(feedflowdailyB2.ts)*24*60*60 # length of signal in seconds 
 feedflowdailyB2.tot <- feedflowdailyB2.freq*feedflowdailyB2.dur #total number of sample
 
 feedflowdailyB2.x <- seq(0, feedflowdailyB2.dur, length.out = tot)
@@ -2070,13 +2151,13 @@ feedflowdailyB2.dfFouri[1,3] <- ""
 ggplot(feedflowdailyB2.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,18) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="2B Drum Feed Flow Fourier Analysis")
 
 # 2B drum speed
-drumspeeddailyB2.ts <- ts(filterdrumspeeddailyB2$data) #change to time series
-drumspeeddailyB2.freq <- (1/(30*60))  #sample frequency in Hz 
-drumspeeddailyB2.dur <- length(drumspeeddailyB2.ts)*30*60 # length of signal in seconds 
+drumspeeddailyB2.ts <- ts(filterdrumspeeddailyB2$data[100:200]) #change to time series
+drumspeeddailyB2.freq <- (1/(24*60*60))  #sample frequency in Hz 
+drumspeeddailyB2.dur <- length(drumspeeddailyB2.ts)*24*60*60 # length of signal in seconds 
 drumspeeddailyB2.tot <- drumspeeddailyB2.freq*drumspeeddailyB2.dur #total number of sample
 
 drumspeeddailyB2.x <- seq(0, drumspeeddailyB2.dur, length.out = tot)
@@ -2090,19 +2171,19 @@ drumspeeddailyB2.freqvec <- drumspeeddailyB2.freqvec/drumspeeddailyB2.dur #vecto
 drumspeeddailyB2.dfFouri <- data.frame(freq = drumspeeddailyB2.freqvec[1:as.integer(0.5*drumspeeddailyB2.freq*drumspeeddailyB2.dur)]*60*60*24,
                                          amount = drumspeeddailyB2.amo[1:as.integer(0.5*drumspeeddailyB2.freq*drumspeeddailyB2.dur)])
 drumspeeddailyB2.dfFouri <- drumspeeddailyB2.dfFouri %>%
-  mutate(period = ifelse(drumspeeddailyB2.dfFouri$amount >= 1,
+  mutate(period = ifelse(drumspeeddailyB2.dfFouri$amount >= 0.08,
                          paste(round(1/drumspeeddailyB2.dfFouri$freq, 2),"days"),""))
 drumspeeddailyB2.dfFouri[1,3] <- ""
 ggplot(drumspeeddailyB2.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,0.25) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="2B Drum Speed Fourier Analysis")
 
 # 2B bath level
-bathleveldailyB2.ts <- ts(filterbathleveldailyB2$data) #change to time series
-bathleveldailyB2.freq <- (1/(30*60))  #sample frequency in Hz 
-bathleveldailyB2.dur <- length(bathleveldailyB2.ts)*30*60 # length of signal in seconds 
+bathleveldailyB2.ts <- ts(filterbathleveldailyB2$data[100:200]) #change to time series
+bathleveldailyB2.freq <- (1/(24*60*60))  #sample frequency in Hz 
+bathleveldailyB2.dur <- length(bathleveldailyB2.ts)*24*60*60 # length of signal in seconds 
 bathleveldailyB2.tot <- bathleveldailyB2.freq*bathleveldailyB2.dur #total number of sample
 
 bathleveldailyB2.x <- seq(0, bathleveldailyB2.dur, length.out = tot)
@@ -2122,13 +2203,13 @@ bathleveldailyB2.dfFouri[1,3] <- ""
 ggplot(bathleveldailyB2.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,7.5) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="2B Drum Bath Level Fourier Analysis")
 
 # 2B vacuum
-vacuumdailyB2.ts <- ts(filtervacuumdailyB2$data) #change to time series
-vacuumdailyB2.freq <- (1/(30*60))  #sample frequency in Hz 
-vacuumdailyB2.dur <- length(vacuumdailyB2.ts)*30*60 # length of signal in seconds 
+vacuumdailyB2.ts <- ts(filtervacuumdailyB2$data[100:200]) #change to time series
+vacuumdailyB2.freq <- (1/(24*60*60))  #sample frequency in Hz 
+vacuumdailyB2.dur <- length(vacuumdailyB2.ts)*24*60*60 # length of signal in seconds 
 vacuumdailyB2.tot <- vacuumdailyB2.freq*vacuumdailyB2.dur #total number of sample
 
 vacuumdailyB2.x <- seq(0, vacuumdailyB2.dur, length.out = tot)
@@ -2142,20 +2223,20 @@ vacuumdailyB2.freqvec <- vacuumdailyB2.freqvec/vacuumdailyB2.dur #vector divided
 vacuumdailyB2.dfFouri <- data.frame(freq = vacuumdailyB2.freqvec[1:as.integer(0.5*vacuumdailyB2.freq*vacuumdailyB2.dur)]*60*60*24,
                                       amount = vacuumdailyB2.amo[1:as.integer(0.5*vacuumdailyB2.freq*vacuumdailyB2.dur)])
 vacuumdailyB2.dfFouri <- vacuumdailyB2.dfFouri %>%
-  mutate(period = ifelse(vacuumdailyB2.dfFouri$amount >= 1,
+  mutate(period = ifelse(vacuumdailyB2.dfFouri$amount >= 0.5,
                          paste(round(1/vacuumdailyB2.dfFouri$freq, 2),"days"),""))
 vacuumdailyB2.dfFouri[1,3] <- ""
 ggplot(vacuumdailyB2.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,2.5) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="2B Drum Vacuum Pressure Fourier Analysis")
 
 
 # 2B cake wash
-cakewashdailyB2.ts <- ts(filtercakewashdailyB2$data) #change to time series
-cakewashdailyB2.freq <- (1/(30*60))  #sample frequency in Hz 
-cakewashdailyB2.dur <- length(cakewashdailyB2.ts)*30*60 # length of signal in seconds 
+cakewashdailyB2.ts <- ts(filtercakewashdailyB2$data[100:200]) #change to time series
+cakewashdailyB2.freq <- (1/(24*60*60))  #sample frequency in Hz 
+cakewashdailyB2.dur <- length(cakewashdailyB2.ts)*24*60*60 # length of signal in seconds 
 cakewashdailyB2.tot <- cakewashdailyB2.freq*cakewashdailyB2.dur #total number of sample
 
 cakewashdailyB2.x <- seq(0, cakewashdailyB2.dur, length.out = tot)
@@ -2169,19 +2250,19 @@ cakewashdailyB2.freqvec <- cakewashdailyB2.freqvec/cakewashdailyB2.dur #vector d
 cakewashdailyB2.dfFouri <- data.frame(freq = cakewashdailyB2.freqvec[1:as.integer(0.5*cakewashdailyB2.freq*cakewashdailyB2.dur)]*60*60*24,
                                         amount = cakewashdailyB2.amo[1:as.integer(0.5*cakewashdailyB2.freq*cakewashdailyB2.dur)])
 cakewashdailyB2.dfFouri <- cakewashdailyB2.dfFouri %>%
-  mutate(period = ifelse(cakewashdailyB2.dfFouri$amount >= 1,
+  mutate(period = ifelse(cakewashdailyB2.dfFouri$amount >= 0.5,
                          paste(round(1/cakewashdailyB2.dfFouri$freq, 2),"days"),""))
 cakewashdailyB2.dfFouri[1,3] <- ""
 ggplot(cakewashdailyB2.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,2) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="2B Drum Cake Wash Fourier Analysis")
 
 # 2B soda filtrate conc.
-sodafiltratedailyB2.ts <- ts(filtersodafiltratedailyB2$data) #change to time series
-sodafiltratedailyB2.freq <- (1/(30*60))  #sample frequency in Hz 
-sodafiltratedailyB2.dur <- length(sodafiltratedailyB2.ts)*30*60 # length of signal in seconds 
+sodafiltratedailyB2.ts <- ts(filtersodafiltratedailyB2$data[100:200]) #change to time series
+sodafiltratedailyB2.freq <- (1/(24*60*60))  #sample frequency in Hz 
+sodafiltratedailyB2.dur <- length(sodafiltratedailyB2.ts)*24*60*60 # length of signal in seconds 
 sodafiltratedailyB2.tot <- sodafiltratedailyB2.freq*sodafiltratedailyB2.dur #total number of sample
 
 sodafiltratedailyB2.x <- seq(0, sodafiltratedailyB2.dur, length.out = tot)
@@ -2201,14 +2282,14 @@ sodafiltratedailyB2.dfFouri[1,3] <- ""
 ggplot(sodafiltratedailyB2.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,8) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="2B Drum Soda Filtrate Fourier Analysis")
 
 
 # 2B oxalate filtrate
-oxfiltratedailyB2.ts <- ts(filteroxfiltratedailyB2$data) #change to time series
-oxfiltratedailyB2.freq <- (1/(30*60))  #sample frequency in Hz 
-oxfiltratedailyB2.dur <- length(oxfiltratedailyB2.ts)*30*60 # length of signal in seconds 
+oxfiltratedailyB2.ts <- ts(filteroxfiltratedailyB2$data[100:200]) #change to time series
+oxfiltratedailyB2.freq <- (1/(24*60*60))  #sample frequency in Hz 
+oxfiltratedailyB2.dur <- length(oxfiltratedailyB2.ts)*24*60*60 # length of signal in seconds 
 oxfiltratedailyB2.tot <- oxfiltratedailyB2.freq*oxfiltratedailyB2.dur #total number of sample
 
 oxfiltratedailyB2.x <- seq(0, oxfiltratedailyB2.dur, length.out = tot)
@@ -2222,11 +2303,11 @@ oxfiltratedailyB2.freqvec <- oxfiltratedailyB2.freqvec/oxfiltratedailyB2.dur #ve
 oxfiltratedailyB2.dfFouri <- data.frame(freq = oxfiltratedailyB2.freqvec[1:as.integer(0.5*oxfiltratedailyB2.freq*oxfiltratedailyB2.dur)]*60*60*24,
                                           amount = oxfiltratedailyB2.amo[1:as.integer(0.5*oxfiltratedailyB2.freq*oxfiltratedailyB2.dur)])
 oxfiltratedailyB2.dfFouri <- oxfiltratedailyB2.dfFouri %>%
-  mutate(period = ifelse(oxfiltratedailyB2.dfFouri$amount >= 1,
+  mutate(period = ifelse(oxfiltratedailyB2.dfFouri$amount >= 0.5,
                          paste(round(1/oxfiltratedailyB2.dfFouri$freq, 2),"days"),""))
 oxfiltratedailyB2.dfFouri[1,3] <- ""
 ggplot(oxfiltratedailyB2.dfFouri, aes(x = freq,y = amount)) +
   geom_bar(stat = "identity", color = "black", fill = "white")+
   geom_text(aes(label=period), hjust = -0.1, size = 3, angle = 90)+
-  xlim(0,2) + ylim(0,10) + labs(x ="Freq, 1/day",y ="Magnitude", 
+  xlim(0,0.5) + ylim(0,2.5) + labs(x ="Freq, 1/day",y ="Magnitude", 
                                 title ="2B Drum Oxalate Filtrate Fourier Analysis")
